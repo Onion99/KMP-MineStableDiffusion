@@ -23,6 +23,8 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import ktsoup.KtSoupDocument
+import ktsoup.KtSoupParser
 import org.onion.read.rule.ExploreRuleParser
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,6 +48,11 @@ class ComposeAppCommonTest {
         // 将 null 值编码进去，而不是省略字段
         encodeDefaults = true
     }
+
+
+    // ---- 在JS代码中获取Jsoup对应的select内容 ------
+    val jsoupSelectRegex = Regex("""\.select\s*\(['"](.*?)['"]\)""")
+
 
     @Test
     fun requestBookSource() = runTest{
@@ -74,9 +81,7 @@ class ComposeAppCommonTest {
                         ruler.substring(4, ruler.lastIndexOf("<"))
                     }
                 }
-                println("jsStr-> $jsStr")
                 println("sourceUrl-> $bookSourceUrl")
-                val finalBookSourceUrl = bookSourceUrlRegex.find(bookSourceUrl)?.groupValues?.first() ?: ""
                 launch {
                     quickJs {
                         define("source"){
@@ -128,20 +133,33 @@ class ComposeAppCommonTest {
                         function("gets_key"){ args ->
                             ""
                         }
-                        define("org"){
-                            define("jsoup"){
-                                function("parse"){ args ->
-                                    ""
+                        // ---- 在KMP中,针对原Java的org.jsoup.Jsoup进行替换成这边quickJs定义的 ------
+                        var formatJsStr = jsStr.replace("org.jsoup.Jsoup","jsoup")
+                        // ---- 正则获取Jsoup select 要查询的内容,以便后面KMP的Ksoup库进行查询 ------
+                        val jsoupSelectContent = jsoupSelectRegex.find(jsStr)?.groupValues
+                        println("jsoup select-> $jsoupSelectContent")
+                        // ---- 因为quickJs 中 无法处理 jsoup.parse(tag).select('xxxx")的语法,需要进行空格替换,自己处理 ------
+                        if(jsoupSelectContent.isNullOrEmpty().not()){
+                            formatJsStr = formatJsStr.replace(jsoupSelectContent.first(),"")
+                        }
+                        println("jsStr-> $formatJsStr")
+                        define("jsoup"){
+                            function("parse"){ args ->
+                                KtSoupParser.parse(args.first().toString()).run {
+                                    val query = querySelectorAll(jsoupSelectContent!![1])
+                                    val mapContent = query.map { it.textContent() }
+                                    println("jsoup query-> $mapContent")
+                                    mapContent
                                 }
                             }
                         }
                         var jsonParseResult = runCatching {
-                            httpJson.decodeFromString<List<BookKind>>(jsStr.trim())
+                            httpJson.decodeFromString<List<BookKind>>(formatJsStr.trim())
                         }.getOrNull()
                         if(jsonParseResult.isNullOrEmpty().not()){
                             println("json kind-> ${jsonParseResult}")
                         }else {
-                            val evaluateResult = evaluate<List<BookKind>>(jsStr.trim())
+                            val evaluateResult = evaluate<List<BookKind>>(formatJsStr.trim())
                             jsonParseResult = evaluateResult
                             println("evaluate kind-> ${evaluateResult}")
                         }
