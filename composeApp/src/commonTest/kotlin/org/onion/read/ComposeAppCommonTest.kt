@@ -147,7 +147,7 @@ class ComposeAppCommonTest {
                             function("parse"){ args ->
                                 KtSoupParser.parse(args.first().toString()).run {
                                     val query = querySelectorAll(jsoupSelectContent!![1])
-                                    val mapContent = query.map { it.textContent() }
+                                    val mapContent = query.map { it.attr("href") }
                                     println("jsoup query-> $mapContent")
                                     mapContent
                                 }
