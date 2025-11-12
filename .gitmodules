@@ -1,0 +1,6 @@
+[submodule "cpp/stable-diffusion.cpp"]
+	path = cpp/stable-diffusion.cpp
+	url = https://github.com/leejet/stable-diffusion.cpp.git
+[submodule "cpp/stable-diffusion"]
+	path = cpp/stable-diffusion
+	url = https://github.com/leejet/stable-diffusion.cpp.git
