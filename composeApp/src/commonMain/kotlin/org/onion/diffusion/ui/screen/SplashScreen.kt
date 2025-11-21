@@ -41,7 +41,7 @@ import ui.theme.AppTheme
 
 fun NavGraphBuilder.splashScreen(autoToMainPage: () -> Unit){
     composable(RootRoute.Splash.name) {
-        val scale = remember { Animatable(0.5f) }
+        val scale = remember { Animatable(0.7f) }
         val alpha = remember { Animatable(0f) }
 
         LaunchedEffect(true) {
@@ -75,7 +75,7 @@ fun NavGraphBuilder.splashScreen(autoToMainPage: () -> Unit){
         ) {
             Image(
                 modifier = Modifier
-                    .fillMaxSize(0.5f)
+                    .fillMaxSize(0.7f)
                     .align(Alignment.Center)
                     .scale(scale.value)
                     .alpha(alpha.value),
