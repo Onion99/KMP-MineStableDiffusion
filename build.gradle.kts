@@ -13,6 +13,13 @@ plugins {
 
 // Project Dir
 val dirProject: Directory = layout.projectDirectory
-// Cpp
+// Cpp-目录,CMake路径,库输出目录
 val dirCpp by extra(dirProject.dir("cpp"))
 val dirCppMakeFile by extra("${dirCpp}/diffusion-loader.cpp/CMakeLists.txt")
+val cppLibsDir by extra(dirCpp.dir("libs"))
+// composeApp Dir
+val dirApp by extra(dirProject.dir(projects.composeApp.name))
+val dirAppSrc by extra(dirApp.dir("src"))
+// composeApp-jvmMain Dir
+val jvmDir by extra(dirAppSrc.dir("jvmMain"))
+val jvmResourceLibDir by extra("${jvmDir}/resources/libs")

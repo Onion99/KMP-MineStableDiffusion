@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 3.22.1)
 # 定义项目名称
 project("sdloader")
 
+# 指定项目输出动态链接库的目录,我这里是D:\Coding\Happy\MineGPT\cpp\libs
+get_filename_component(CPP_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
+string(REPLACE "\\" "/" CPP_ROOT_DIR "${CPP_ROOT_DIR}") # 规范化路径
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CPP_ROOT_DIR}/libs") # .exe and .dll
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CPP_ROOT_DIR}/libs") # .so and .dylib
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CPP_ROOT_DIR}/libs") # .lib and .a
 
 
 # 创建一个变量指向 stable-diffusion.cpp 目录
