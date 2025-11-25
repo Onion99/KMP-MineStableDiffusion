@@ -54,42 +54,64 @@ endif()
 # 告诉 ggml 的构建系统，需要启用 Vulkan 后端
 set(GGML_VULKAN ON CACHE BOOL "ggml: vulkan" FORCE)
 
-# 在 Android NDK 的默认链接路径中查找 Vulkan 的动态库 (libvulkan.so)，并将其路径存入 VULKAN_LIB 变量。REQUIRED 表示如果找不到就报错
-find_library(VULKAN_LIB vulkan REQUIRED)
-# 手动指定了 Vulkan C 头文件 (vulkan/vulkan.h 等) 的位置。这里的路径是硬编码的，指向 NDK 内部的 sysroot。虽然有效，但如果 NDK 结构变化，可能会失效
-# 根据主机操作系统（Host OS）动态确定 NDK 预编译工具链的路径
-if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    set(HOST_PREBUILT_DIR "windows-x86_64")
-elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-    set(HOST_PREBUILT_DIR "linux-x86_64")
-elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-    set(HOST_PREBUILT_DIR "darwin-x86_64")
+# 根据目标平台配置 Vulkan
+if(ANDROID)
+    # Android 平台：使用 NDK 的 Vulkan
+    message(STATUS "配置 Android 平台的 Vulkan")
+    
+    # 在 Android NDK 的默认链接路径中查找 Vulkan 的动态库 (libvulkan.so)，并将其路径存入 VULKAN_LIB 变量。REQUIRED 表示如果找不到就报错
+    find_library(VULKAN_LIB vulkan REQUIRED)
+    
+    # 根据主机操作系统（Host OS）动态确定 NDK 预编译工具链的路径
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        set(HOST_PREBUILT_DIR "windows-x86_64")
+    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        set(HOST_PREBUILT_DIR "linux-x86_64")
+    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+        set(HOST_PREBUILT_DIR "darwin-x86_64")
+    else()
+        message(FATAL_ERROR "不支持的主机操作系统: ${CMAKE_HOST_SYSTEM_NAME}")
+    endif()
+    
+    # 指定 Vulkan C 头文件 (vulkan/vulkan.h 等) 头文件的位置，现在路径是跨平台的
+    set(Vulkan_INCLUDE_DIR "${ANDROID_NDK}/toolchains/llvm/prebuilt/${HOST_PREBUILT_DIR}/sysroot/usr/include")
+    
+    # 使用 FetchContent 下载 Vulkan C++ 头文件
+    include(FetchContent)
+    FetchContent_Declare(
+            vulkan_hpp
+            GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Hpp.git
+            GIT_TAG        v1.3.275  # Must match Android NDK's Vulkan version
+            GIT_SHALLOW    TRUE
+    )
+    FetchContent_MakeAvailable(vulkan_hpp)
+    
+    # 给 stable-diffusion's ggml-vulkan 配置 Vulkan 环境
+    set(Vulkan_INCLUDE_DIRS "${Vulkan_INCLUDE_DIR};${vulkan_hpp_SOURCE_DIR}")
+    set(Vulkan_LIBRARIES "${VULKAN_LIB}")
+    set(Vulkan_FOUND ON)
+    set(Vulkan_INCLUDE_DIR "${Vulkan_INCLUDE_DIR}" CACHE PATH "Vulkan include directory" FORCE)
+    set(Vulkan_LIBRARY "${VULKAN_LIB}" CACHE FILEPATH "Vulkan library" FORCE)
+    
 else()
-    message(FATAL_ERROR "不支持的主机操作系统: ${CMAKE_HOST_SYSTEM_NAME}")
+    # 其他平台（Windows/Linux/macOS）：使用系统安装的 Vulkan SDK
+    message(STATUS "配置桌面平台的 Vulkan (Windows/Linux/macOS)")
+    
+    # 使用标准的 find_package 查找 Vulkan SDK
+    find_package(Vulkan REQUIRED)
+    
+    if(NOT Vulkan_FOUND)
+        message(FATAL_ERROR "未找到 Vulkan SDK！请从 https://vulkan.lunarg.com/sdk/home 下载并安装 Vulkan SDK,并配置环境变量")
+    endif()
+    
+    message(STATUS "找到 Vulkan SDK:")
+    message(STATUS "  - 库: ${Vulkan_LIBRARIES}")
+    message(STATUS "  - 头文件: ${Vulkan_INCLUDE_DIRS}")
+    
+    # 设置 Vulkan 变量供后续使用
+    set(VULKAN_LIB ${Vulkan_LIBRARIES})
+    
 endif()
-# 指定 Vulkan C 头文件 (vulkan/vulkan.h 等) 头文件的位置，现在路径是跨平台的,
-set(Vulkan_INCLUDE_DIR "${ANDROID_NDK}/toolchains/llvm/prebuilt/${HOST_PREBUILT_DIR}/sysroot/usr/include")
-
-
-# 使用 FetchContent 下载 Vulkan C++ 头文件,这是现代 CMake 的一个核心功能，用于在配置阶段自动下载和集成外部依赖
-# FetchContent_Declare: 声明一个名为 vulkan_hpp 的依赖项，告诉 CMake 从哪里 (Git 仓库) 和哪个版本 (Git Tag) 下载
-# FetchContent_MakeAvailable: 实际执行下载，并将其添加到构建中。执行后，会生成 ${vulkan_hpp_SOURCE_DIR} 这样的变量，指向下载好的源码目录
-# 这种方式远优于手动下载或使用 Git Submodules，因为它与 CMake 构建过程无缝集成
-include(FetchContent)
-FetchContent_Declare(
-        vulkan_hpp
-        GIT_REPOSITORY https://github.com/KhronosGroup/Vulkan-Hpp.git
-        GIT_TAG        v1.3.275  # Must match Android NDK's Vulkan version
-        GIT_SHALLOW    TRUE
-)
-FetchContent_MakeAvailable(vulkan_hpp)
-
-# 给 stable-diffusion's ggml-vulkan 配置 Vulkan 环境
-set(Vulkan_INCLUDE_DIRS "${Vulkan_INCLUDE_DIR};${vulkan_hpp_SOURCE_DIR}")
-set(Vulkan_LIBRARIES "${VULKAN_LIB}")
-set(Vulkan_FOUND ON)
-set(Vulkan_INCLUDE_DIR "${Vulkan_INCLUDE_DIR}" CACHE PATH "Vulkan include directory" FORCE)
-set(Vulkan_LIBRARY "${VULKAN_LIB}" CACHE FILEPATH "Vulkan library" FORCE)
 
 # 添加预编译的库
 # A-add_subdirectory:将另一个目录下的 CMake 项目包含到当前的构建流程中。这个子目录必须有自己的 CMakeLists.txt 文件
