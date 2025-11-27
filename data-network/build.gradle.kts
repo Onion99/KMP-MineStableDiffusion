@@ -40,6 +40,11 @@ kotlin {
                 api(libs.ktor.client.okhttp)
             }
         }
+        desktopMain{
+            dependencies {
+                api(libs.ktor.client.okhttp)
+            }
+        }
     }
 }
 
