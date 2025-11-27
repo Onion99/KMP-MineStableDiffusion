@@ -4,6 +4,7 @@
 **/build/
 xcuserdata
 !src/**/build/
+build-windows
 local.properties
 .idea
 .DS_Store
@@ -16,3 +17,5 @@ captures
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+/cpp/diffusion-loader.cpp/build-windows/
+/cpp/libs/
