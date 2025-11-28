@@ -82,6 +82,7 @@ kotlin {
             implementation(libs.filekit.dialogs)
             implementation(libs.filekit.dialogs.compose)
             implementation(libs.filekit.coil)
+            implementation(libs.coil.compose)
             // ---- Project Module ------
             implementation(projects.shared)
             implementation(projects.uiTheme)

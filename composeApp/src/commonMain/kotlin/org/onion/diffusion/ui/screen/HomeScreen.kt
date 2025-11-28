@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -64,6 +65,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import coil3.compose.AsyncImage
 import com.onion.model.ChatMessage
 import com.onion.theme.style.MediumOutlinedTextField
 import com.onion.theme.style.MediumText
@@ -213,6 +215,7 @@ private fun ChatMessagesList(chatMessages: List<ChatMessage>) {
                 ) {
                     ChatBubble(
                         message = message.message,
+                        image = message.image,
                         isUser = message.isUser
                     )
                 }
@@ -404,6 +407,7 @@ fun SendStopButton(
 @Composable
 fun ChatBubble(
     message: String,
+    image: ByteArray? = null,
     isUser: Boolean
 ) {
     Box(
@@ -432,6 +436,7 @@ fun ChatBubble(
 
             ChatBubbleMessage(
                 message = message,
+                image = image,
                 isUser = isUser
             )
         }
@@ -488,37 +493,69 @@ private fun AiProviderIcon() {
 @Composable
 private fun ChatBubbleMessage(
     message: String,
+    image: ByteArray? = null,
     isUser: Boolean
 ) {
     if (isUser) {
-        UserMessage(message = message)
+        UserMessage(message = message, image = image)
     } else {
-        AiMessage(message = message)
+        AiMessage(message = message, image = image)
     }
 }
 
 @Composable
-private fun UserMessage(message: String) {
-    MediumText(
-        text = message,
-        color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier
-            .padding(top = 4.dp, end = 8.dp)
-            .fillMaxWidth()
-    )
+private fun UserMessage(message: String, image: ByteArray? = null) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        if (image != null) {
+            AsyncImage(
+                model = image,
+                contentDescription = "User Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(RoundedCornerShape(8.dp))
+                    .padding(bottom = 4.dp)
+            )
+        }
+        if (message.isNotEmpty()) {
+            MediumText(
+                text = message,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier
+                    .padding(top = 4.dp, end = 8.dp)
+                    .fillMaxWidth()
+            )
+        }
+    }
 }
 
 @Composable
 private fun AiMessage(
-    message: String
+    message: String,
+    image: ByteArray? = null
 ) {
-    MediumText(
-        text = message,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier
-            .padding(top = 4.dp, end = 8.dp)
-            .fillMaxWidth()
-    )
+    Column(modifier = Modifier.fillMaxWidth()) {
+        if (image != null) {
+            AsyncImage(
+                model = image,
+                contentDescription = "AI Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(RoundedCornerShape(8.dp))
+                    .padding(bottom = 4.dp)
+            )
+        }
+        if (message.isNotEmpty()) {
+            MediumText(
+                text = message,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .padding(top = 4.dp, end = 8.dp)
+                    .fillMaxWidth()
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalResourceApi::class)
