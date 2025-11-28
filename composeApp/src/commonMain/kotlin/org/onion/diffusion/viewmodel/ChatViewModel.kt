@@ -46,13 +46,8 @@ class ChatViewModel  : ViewModel() {
         runCatching {
             responseGenerationJob = viewModelScope.launch(Dispatchers.Default) {
                 isInferenceOn = true
-                val responseContent = StringBuilder()
                 val duration = measureTime {
 
-                    /*llmTalker.getResponse(query).collect { newContent ->
-                        responseContent.append(newContent)
-                        generateResponseIncrementally(newContent,responseContent.toString())
-                    }*/
                 }
                 isGenerating.value = false
             }
@@ -63,15 +58,6 @@ class ChatViewModel  : ViewModel() {
             }else onError(exception)
         }
     }
-    private suspend fun generateResponseIncrementally(appendContent: String,responseContent: String) {
-        for (i in appendContent.indices) {
-            if (!isGenerating.value) break
-            _currentChatMessages[_currentChatMessages.lastIndex] = ChatMessage(responseContent.take(responseContent.length - (appendContent.length - i)), false)
-            delay(5)
-        }
-        isInferenceOn = false
-    }
-
 
     // ========================================================================================
     //                              Chat Message State

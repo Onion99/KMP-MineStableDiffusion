@@ -39,7 +39,6 @@ actual class DiffusionLoader actual constructor() {
     }
 
     actual fun txt2Img(
-        handle: Long,
         prompt: String,
         negative: String,
         width: Int,
@@ -47,7 +46,7 @@ actual class DiffusionLoader actual constructor() {
         steps: Int,
         cfg: Float,
         seed: Long
-    ): ByteArray? = nativeTxt2Img(handle,prompt,negative,width,height,steps,cfg,seed)
+    ): ByteArray? = nativeTxt2Img(nativePtr,prompt,negative,width,height,steps,cfg,seed)
 
     private external fun nativeLoadModel(modelPath: String, offloadToCpu: Boolean, keepClipOnCpu: Boolean, keepVaeOnCpu: Boolean): Long
     private external fun nativeTxt2Img(
