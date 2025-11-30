@@ -13,6 +13,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.onion.diffusion.native.DiffusionLoader
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
 class ChatViewModel  : ViewModel() {
@@ -42,12 +44,33 @@ class ChatViewModel  : ViewModel() {
 
     private var responseGenerationJob: Job? = null
     private var isInferenceOn: Boolean = false
+    @OptIn(ExperimentalTime::class)
     fun getTalkerResponse(query: String, onCancelled: () -> Unit, onError: (Throwable) -> Unit){
         runCatching {
             responseGenerationJob = viewModelScope.launch(Dispatchers.Default) {
                 isInferenceOn = true
                 val duration = measureTime {
-
+                    // Call txt2Img to generate image from the query prompt
+                    val imageByteArray = diffusionLoader.txt2Img(
+                        prompt = query,
+                        negative = "",
+                        width = 512,
+                        height = 512,
+                        steps = 20,
+                        cfg = 7.5f,
+                        seed = Clock.System.now().toEpochMilliseconds()
+                    )
+                    
+                    // Update the last message in the chat with the generated image
+                    if (_currentChatMessages.isNotEmpty()) {
+                        val lastIndex = _currentChatMessages.lastIndex
+                        val lastMessage = _currentChatMessages[lastIndex]
+                        _currentChatMessages[lastIndex] = ChatMessage(
+                            message = lastMessage.message,
+                            isUser = false,
+                            image = imageByteArray
+                        )
+                    }
                 }
                 isGenerating.value = false
             }
