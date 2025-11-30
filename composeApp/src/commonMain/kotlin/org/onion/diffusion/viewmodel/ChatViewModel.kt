@@ -60,16 +60,36 @@ class ChatViewModel  : ViewModel() {
                         cfg = 7.5f,
                         seed = Clock.System.now().toEpochMilliseconds()
                     )
-                    
+
+                    // Debug logging to verify image format
+                    println("=== Image Generation Debug ===")
+                    println("Image size: ${imageByteArray?.size} bytes")
+                    if (imageByteArray != null && imageByteArray.size >= 10) {
+                        println("First 10 bytes: ${imageByteArray.take(10).joinToString { it.toString() }}")
+                        // PNG signature: 137 80 78 71 13 10 26 10
+                        // JPEG signature: 255 216 255
+                        val isPNG = imageByteArray.size >= 8 &&
+                                imageByteArray[0].toInt() == 137 &&
+                                imageByteArray[1].toInt() == 80
+                        val isJPEG = imageByteArray.size >= 3 &&
+                                imageByteArray[0].toInt() and 0xFF == 255 &&
+                                imageByteArray[1].toInt() and 0xFF == 216
+                        println("Format detection - PNG: $isPNG, JPEG: $isJPEG")
+                    }
+                    println("Expected size for 512x512 RGBA: ${512 * 512 * 4} bytes")
+                    println("Expected size for 512x512 RGB: ${512 * 512 * 3} bytes")
+                    println("==============================")
+
                     // Update the last message in the chat with the generated image
+                    // Using removeAt + add instead of index assignment to trigger recomposition
                     if (_currentChatMessages.isNotEmpty()) {
                         val lastIndex = _currentChatMessages.lastIndex
-                        val lastMessage = _currentChatMessages[lastIndex]
-                        _currentChatMessages[lastIndex] = ChatMessage(
-                            message = lastMessage.message,
+                        _currentChatMessages.removeAt(lastIndex)
+                        _currentChatMessages.add(lastIndex, ChatMessage(
+                            message = "图片生成完成:${imageByteArray?.size}字节",
                             isUser = false,
                             image = imageByteArray
-                        )
+                        ))
                     }
                 }
                 isGenerating.value = false

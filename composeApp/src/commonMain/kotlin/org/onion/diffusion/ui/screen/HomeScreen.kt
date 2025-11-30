@@ -540,8 +540,7 @@ private fun AiMessage(
                 model = image,
                 contentDescription = "AI Image",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
+                    .size(256.dp,256.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .padding(bottom = 4.dp)
             )

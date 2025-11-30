@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.setSingletonImageLoaderFactory
 import com.onion.network.di.networkModule
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
@@ -17,6 +18,7 @@ import org.onion.diffusion.ui.navigation.route.RootRoute
 import org.onion.diffusion.ui.screen.homeScreen
 import org.onion.diffusion.ui.screen.mainScreen
 import org.onion.diffusion.ui.screen.splashScreen
+import org.onion.diffusion.utils.imageLoaderDiskCache
 import ui.theme.AppTheme
 
 @Composable
@@ -25,6 +27,10 @@ fun App() {
     KoinApplication({
         modules(viewModelModule, networkModule)
     }){
+        // Initialize the Coil3 image loader
+        setSingletonImageLoaderFactory { context ->
+            imageLoaderDiskCache(context)
+        }
         AppTheme {
             val rootNavController = rememberNavController()
             val rootNavActions = remember(rootNavController) {
