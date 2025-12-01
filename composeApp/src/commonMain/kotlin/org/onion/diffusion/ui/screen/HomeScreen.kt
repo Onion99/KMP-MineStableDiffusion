@@ -55,6 +55,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -539,6 +540,8 @@ private fun AiMessage(
             AsyncImage(
                 model = image,
                 contentDescription = "AI Image",
+                alignment = Alignment.Center,
+                contentScale = ContentScale.Inside,
                 modifier = Modifier
                     .size(256.dp,256.dp)
                     .clip(RoundedCornerShape(8.dp))

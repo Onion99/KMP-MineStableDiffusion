@@ -17,7 +17,7 @@ actual class DiffusionLoader actual constructor() {
 
 
     actual fun loadModel(modelPath: String) {
-        nativePtr = nativeLoadModel(modelPath,true,true,true)
+        nativePtr = nativeLoadModel(modelPath,false,false,false)
     }
 
     actual fun release() {
