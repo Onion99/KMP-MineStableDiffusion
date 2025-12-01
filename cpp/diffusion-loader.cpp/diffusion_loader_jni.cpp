@@ -53,7 +53,8 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
     sd_ctx_params_init(&p);
     // 配置参数,将从 Java 传来的参数赋值给 C++ 结构体
     p.model_path = modelPath ? modelPath : "";
-    p.free_params_immediately = true;
+    // 不要立即释放资源,以方便下次使用
+    p.free_params_immediately = false;
     p.n_threads = get_num_physical_cores();
     p.offload_params_to_cpu = offloadToCpu;
     p.keep_clip_on_cpu = keepClipOnCpu;
