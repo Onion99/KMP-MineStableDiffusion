@@ -2,6 +2,10 @@
 #include <jni.h>
 #include "stable-diffusion.h"
 #include <iostream>
+#include <vector>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "../stable-diffusion.cpp/thirdparty/stb_image_write.h"
 
 ///////////////////////////////////////////////////////////////////////////
 // 一个自定义的结构体,包装了真正的 sd_ctx_t* 指针。这样做可以方便未来扩展，比如在 SdHandle 中增加更多的状态信息
@@ -11,6 +15,18 @@ struct SdHandle{
     int last_width = 0;
     int last_height = 0;
 };
+
+// 用于收集 PNG 数据的回调函数上下文
+struct PngWriteContext {
+    std::vector<unsigned char> data;
+};
+
+// PNG 写入回调函数 - 将数据追加到 vector 中
+static void png_write_callback(void* context, void* data, int size) {
+    PngWriteContext* ctx = static_cast<PngWriteContext*>(context);
+    unsigned char* bytes = static_cast<unsigned char*>(data);
+    ctx->data.insert(ctx->data.end(), bytes, bytes + size);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // •extern "C"：告诉 C++ 编译器，这个函数要使用 C 语言的调用约定，以避免 C++ 的名称修饰（name mangling），确保 Java 虚拟机（JVM）能够通过函数名找到它。
@@ -66,7 +82,7 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
 
 
 ///////////////////////////////////////////////////////////////////////////
-// •jbyteArray: 返回类型。它对应 Java 中的 byte[]。这是传递原始图像数据（比如 RGB 像素序列）最理想的格式
+// •jbyteArray: 返回类型。它对应 Java 中的 byte[]。一开始传递原始图像数据（比如 RGB 像素序列）最理想的格式,现在返回 PNG 格式的图像数据
 // •jjlong handlePtr: 之前 nativeLoadModel 返回的句柄，用于找到正确的 C++ 端的 StableDiffusion 句柄指针（以 long 形式从 Java 传入）
 // •jPrompt/jNegative: 正向和负向提示词
 // •width/height: 生成图像的尺寸
@@ -121,41 +137,60 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeTxt2Img(JNIEnv* env, jobje
         return nullptr;
     }
 
-    // 计算图像数据总共有多少字节。公式是：宽 × 高 × 通道数 (例如，RGB 图像的通道数是 3)。•env->NewByteArray: 指示 JVM 在 Java 堆上分配一块内存，创建一个 byte[] 数组。
-    const size_t byteCount = (size_t)out[0].width * out[0].height * out[0].channel;
-    // 指示 JVM 在 Java 堆上分配一块内存，创建一个 byte[] 数组
-    jbyteArray jbytes = env->NewByteArray((jsize)byteCount);
-    // 空指针检查，用于验证 JNI 字节数组是否创建成功,不成功就释放资源
+    // 使用回调函数将生成的原始 RGB 数据编码为 PNG 格式
+    PngWriteContext png_ctx;
+    int result = stbi_write_png_to_func(
+        png_write_callback,                   // 写入回调函数
+        &png_ctx,                             // 回调上下文
+        out[0].width,                         // 图像宽度
+        out[0].height,                        // 图像高度
+        out[0].channel,                       // 通道数 (RGB=3, RGBA=4)
+        out[0].data,                          // 原始 RGB 数据
+        out[0].width * out[0].channel         // stride (每行字节数)
+    );
+
+    // 检查 PNG 编码是否成功
+    if (!result || png_ctx.data.empty()) {
+        printf("PNG encoding failed");
+        free(out[0].data);
+        free(out);
+        return nullptr;
+    }
+
+    // 创建 Java 字节数组来存储 PNG 数据
+    jbyteArray jbytes = env->NewByteArray((jsize)png_ctx.data.size());
     if (!jbytes) {
         free(out[0].data);
         free(out);
         return nullptr;
     }
-    // C++ 图像数据复制到 Java 字节数组，复制到刚刚在 Java 堆上创建的 byte[] 数组 (jbytes) 中。这是数据从 C++ 世界回到 Java 世界的关键一步
-    env->SetByteArrayRegion(jbytes, 0, (jsize)byteCount, reinterpret_cast<jbyte*>(out[0].data));
-    // 清理 C++ 输出结果的内存,现在数据已经被安全地复制到 Java 的 byte[] 数组里了，C++ 这边的原始数据副本就不再需要了。我们必须调用 free() 来释放这部分内存，否则每生成一张图，就会在 C++ 堆中留下一大块无法回收的内存，很快就会导致内存耗尽
-    free(out[0].data);
-    free(out);
+
+    // 将 PNG 数据复制到 Java 字节数组
+    env->SetByteArrayRegion(jbytes, 0, (jsize)png_ctx.data.size(),reinterpret_cast<jbyte*>(png_ctx.data.data()));
+    // 清理 C++ 分配的内存 (PNG 数据在 vector 中会自动释放)
+    free(out[0].data);   // 释放原始 RGB 数据
+    free(out);           // 释放图像结构体
+
     return jbytes;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 // •JNIEnv*, jobject: 这两个参数在这里没有被使用，所以连名字都没写。
-// •jlong handlePtr: 这是最重要的参数。它就是 loadModel 函数最后返回的那个 long 型数字。这个数字本质上是 C++ 对象的内存地址，是连接 Java 世界和特定 C++ 实例的唯一“钥匙”
+// •jlong handlePtr: 这是最重要的参数。它就是 loadModel 函数最后返回的那个 long 型数字。这个数字本质上是 C++ 对象的内存地址，是连接 Java 世界和特定 C++ 实例的唯一"钥匙"
 ///////////////////////////////////////////////////////////////////////////
 extern "C" JNIEXPORT void JNICALL
 Java_org_onion_diffusion_native_DiffusionLoader_nativeRelease(JNIEnv*, jobject, jlong handlePtr){
     // loadModel 在失败时会返回 0。如果 Java 代码持有一个为 0 的句柄并尝试调用 destroy，这个检查可以防止后续代码尝试操作一个空地址，从而避免程序崩溃。它直接 return，什么也不做，这是正确的行为
     if (handlePtr == 0) return;
     // 是 loadModel 中 reinterpret_cast<jlong>(handle) 的逆向操作。
-    // •它告诉编译器：“把这个 long 类型的整数 handlePtr 重新解释（cast）为它本来的样子——一个指向 SdHandle 结构体的指针”。•执行完这行代码后，handle 就成了一个有效的 C++ 指针，我们可以通过它访问到之前创建的 SdHandle 对象以及它内部的 ctx（Stable Diffusion 引擎实例）
+    // •它告诉编译器:"把这个 long 类型的整数 handlePtr 重新解释（cast）为它本来的样子——一个指向 SdHandle 结构体的指针"。•执行完这行代码后，handle 就成了一个有效的 C++ 指针，我们可以通过它访问到之前创建的 SdHandle 对象以及它内部的 ctx（Stable Diffusion 引擎实例）
     auto* handle = reinterpret_cast<SdHandle*>(handlePtr);
-    // 安全检查。它确保 ctx 指针不是空的,指针是不是指向ctx。这可以防止在已经销毁过一次的对象上再次调用 free_sd_ctx（这会导致“double free”错误，通常会使程序崩溃)
+    // 安全检查。它确保 ctx 指针不是空的,指针是不是指向ctx。这可以防止在已经销毁过一次的对象上再次调用 free_sd_ctx（这会导致"double free"错误，通常会使程序崩溃)
     if (handle->ctx) {
         // 清理工作,它调用了 stable-diffusion.cpp 库提供的函数，来释放 sd_ctx_t 对象所占用的所有资源。这包括加载到内存中的模型权重、各种计算缓冲区等等，通常会释放几百MB甚至上GB的内存
         free_sd_ctx(handle->ctx);
-        // 好的编程习惯,在释放了指针指向的内存后，立即将指针本身设为 nullptr。这样，如果代码不小心第二次进入这个函数，上面的 if (handle->ctx) 检查就会失败，从而安全地阻止了“double free”错误
+        // 好的编程习惯,在释放了指针指向的内存后，立即将指针本身设为 nullptr。这样，如果代码不小心第二次进入这个函数，上面的 if (handle->ctx) 检查就会失败，从而安全地阻止了"double free"错误
         handle->ctx = nullptr;
     }
     // 释放句柄本身的内存,在 loadModel 中，我们使用了 new SdHandle() 来分配 SdHandle 这个包装结构体。在 C++ 中，任何通过 new 分配的内存都必须通过 delete 来释放
