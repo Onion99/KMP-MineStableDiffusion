@@ -176,15 +176,17 @@ if(ANDROID)# 类似gradle的implementation,给sdloader库添加依赖 android,lo
     # -fvisibility=hidden: 这是针对 Android/Linux 共享库的一项重要优化。
     # -ffunction-sections -fdata-sections: 将每个函数和数据放到独立的节中
     # 它默认隐藏所有符号，可以减小库体积并提高加载速度。
-    target_compile_options(sdloader PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden -ffunction-sections -fdata-sections)
+    target_compile_options(sdloader PUBLIC -fvisibility=hidden -fvisibility-inlines-hidden -ffunction-sections -fdata-sections)
     # 仅在 Android 平台下链接标准的 NDK 库
+    # 一旦你为 sdloader 使用了 PUBLIC 或 PRIVATE，之后所有对 sdloader 的 target_link_libraries 调用也必须使用这些关键字
     target_link_libraries(sdloader
-            PRIVATE
+            PUBLIC
             android
             log
     )
     if(SD_VULKAN)
-        target_link_libraries(sdloader vulkan)
+        # 快速修复：添加 PRIVATE 关键字，使其与之前的调用风格保持一致
+        target_link_libraries(sdloader PUBLIC vulkan)
     endif()
 endif ()
 
