@@ -89,10 +89,7 @@ class ChatViewModel  : ViewModel() {
                                 imageByteArray[1].toInt() and 0xFF == 216
                         println("Format detection - PNG: $isPNG, JPEG: $isJPEG")
                     }
-                    println("Expected size for 512x512 RGBA: ${512 * 512 * 4} bytes")
-                    println("Expected size for 512x512 RGB: ${512 * 512 * 3} bytes")
                     println("==============================")
-
                     // Update the last message in the chat with the generated image
                     // Using removeAt + add instead of index assignment to trigger recomposition
                     if (_currentChatMessages.isNotEmpty()) {
