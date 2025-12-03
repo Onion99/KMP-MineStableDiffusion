@@ -55,7 +55,7 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
     p.model_path = modelPath ? modelPath : "";
     // 不要立即释放资源,以方便下次使用
     p.free_params_immediately = false;
-    p.n_threads = get_num_physical_cores();
+    p.n_threads = sd_get_num_physical_cores();
     p.offload_params_to_cpu = offloadToCpu;
     p.keep_clip_on_cpu = keepClipOnCpu;
     p.keep_vae_on_cpu = keepVaeOnCpu;

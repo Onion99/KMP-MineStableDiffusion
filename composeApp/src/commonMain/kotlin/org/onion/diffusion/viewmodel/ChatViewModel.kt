@@ -65,10 +65,10 @@ class ChatViewModel  : ViewModel() {
                         prompt = promptContent,
                         negative = negativeContent,
                         // 768×1024（竖版人像）/ 1024×768（横版场景）/ 1024×1344（高清竖版）
-                        width = 768,
-                        height = 1024,
-                        steps = 22,//模型渲染细节的 “迭代次数”，步数越多细节越丰富，但耗时越长（20-30 步性价比最高）
-                        cfg = 6f,// 控制模型 “遵守正向提示词” 的严格程度，数值越高越贴合提示词，越低越自由发挥（7.0-9.0 最常用）
+                        width = 256,
+                        height = 256,
+                        steps = 33,//模型渲染细节的 “迭代次数”，步数越多细节越丰富，但耗时越长（20-30 步性价比最高）
+                        cfg = 9f,// 控制模型 “遵守正向提示词” 的严格程度，数值越高越贴合提示词，越低越自由发挥（7.0-9.0 最常用）
                         seed = Clock.System.now().toEpochMilliseconds()
                     )
 
