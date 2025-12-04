@@ -97,6 +97,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.onion.diffusion.ui.navigation.route.MainRoute
 import org.onion.diffusion.utils.Animations
 import org.onion.diffusion.viewmodel.ChatViewModel
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 fun NavGraphBuilder.homeScreen(){
@@ -664,32 +668,32 @@ fun LLMFileSelectTipDialog(
 private fun MagicLoadingAnimation() {
     val infiniteTransition = rememberInfiniteTransition()
 
-    // 渐变背景脉动动画
-    val alphaOffset by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.6f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1500, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
-    // 浮动图标的垂直位置动画
-    val floatOffset by infiniteTransition.animateFloat(
-        initialValue = -8f,
-        targetValue = 8f,
+    // 主圆环呼吸动画 - 大小变化
+    val primaryScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.15f,
         animationSpec = infiniteRepeatable(
             animation = tween(2000, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         )
     )
 
-    // Shimmer效果的移动动画
-    val shimmerOffset by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
+    // 主圆环透明度 - 配合呼吸
+    val primaryAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.4f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
+            animation = tween(2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    // 光点环绕角度
+    val orbitRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         )
     )
@@ -697,73 +701,116 @@ private fun MagicLoadingAnimation() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = alphaOffset),
-                        MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = alphaOffset),
-                        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = alphaOffset)
-                    )
-                )
-            )
-            .padding(16.dp)
+            .height(140.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
     ) {
-        // 浮动的魔法图标
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+        // 主呼吸圆环 - 两层叠加
+        Box(
+            modifier = Modifier.size(80.dp),
+            contentAlignment = Alignment.Center
         ) {
-            listOf("✨", "💫", "🎨", "✨").forEachIndexed { index, icon ->
-                Text(
-                    text = icon,
-                    fontSize = 28.sp,
-                    modifier = Modifier.graphicsLayer {
-                        translationY = floatOffset * (if (index % 2 == 0) 1f else -1f)
-                        alpha = alphaOffset
+            // 外层光晕
+            Box(
+                modifier = Modifier
+                    .size(80.dp * primaryScale)
+                    .graphicsLayer {
+                        alpha = primaryAlpha * 0.5f
                     }
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                                Color.Transparent
+                            )
+                        ),
+                        shape = CircleShape
+                    )
+            )
+
+            // 内层核心圆
+            Box(
+                modifier = Modifier
+                    .size(48.dp * primaryScale)
+                    .graphicsLayer {
+                        alpha = primaryAlpha + 0.3f
+                    }
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                            )
+                        ),
+                        shape = CircleShape
+                    )
+            )
+
+            // 环绕的光点 (6个)
+            repeat(6) { index ->
+                val angle = orbitRotation + (index * 60f)
+                val angleRad = angle * PI / 180
+                val radius = 40f // 轨道半径
+
+                val offsetX = (radius * cos(angleRad)).toFloat()
+                val offsetY = (radius * sin(angleRad)).toFloat()
+
+                // 光点透明度 - 创造深度感
+                val dotAlpha = 0.4f + 0.3f * abs(sin((angle + index * 30) * PI / 180))
+
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .offset(x = offsetX.dp, y = offsetY.dp)
+                        .graphicsLayer {
+                            alpha = dotAlpha.toFloat()
+                        }
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape
+                        )
                 )
             }
         }
 
-        // Shimmer加载条
-        Box(
+        // 渐进文字 - "Creating···"
+        Row(
             modifier = Modifier
-                .fillMaxWidth(0.7f)
-                .height(4.dp)
-                .align(Alignment.BottomCenter)
-                .clip(RoundedCornerShape(2.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+                .align(Alignment.BottomCenter),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalAlignment = Alignment.Bottom
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(100.dp)
-                    .offset(x = (shimmerOffset % 300).dp)
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                                Color.Transparent
-                            )
-                        )
-                    )
+            Text(
+                text = "Creating",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                fontWeight = FontWeight.Normal
             )
-        }
 
-        // 加载文本
-        Text(
-            text = "AI 正在创作中...",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 4.dp)
-        )
+            // 三个点依次淡入淡出
+            repeat(3) { index ->
+                val dotAlpha by infiniteTransition.animateFloat(
+                    initialValue = 0.2f,
+                    targetValue = 0.8f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(
+                            durationMillis = 1200,
+                            delayMillis = index * 300,
+                            easing = FastOutSlowInEasing
+                        ),
+                        repeatMode = RepeatMode.Reverse
+                    )
+                )
+
+                Text(
+                    text = "·",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = dotAlpha),
+                    modifier = Modifier.padding(start = 1.dp)
+                )
+            }
+        }
     }
 }

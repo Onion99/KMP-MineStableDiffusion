@@ -43,7 +43,7 @@ class ChatViewModel  : ViewModel() {
 
     private var responseGenerationJob: Job? = null
     private var isInferenceOn: Boolean = false
-    private val defaultNegative = "worst quality, low quality, normal quality, blurry, pixelated, grainy, jpeg artifacts, noise, overexposed, underexposed, dark, dim, distorted, deformed, malformed, bad anatomy, bad hands, bad fingers, extra fingers, missing fingers, fused fingers, mutated fingers, blurry hands, blurry fingers, disproportionate hands, long fingers, short fingers, bad eyes, cross-eyed, misaligned eyes, empty eyes, distorted eyes, bad face, ugly face, disfigured face, asymmetrical face, mutated face, extra limbs, missing limbs, floating limbs, disconnected limbs, deformed limbs, bad body, disproportionate body, fat, skinny, emaciated, obese, watermark, text, signature, logo, username, stamp, caption, frame, border, duplicate, clone, redundant, overlapping, cut off, cropped, incomplete, messy hair, unkempt hair, stringy hair, bad hair texture, plastic skin, rubber skin, waxy skin, unnatural skin tone, gray skin, green skin, unnatural light, harsh light, flat light, no shadow, wrong shadow direction, cartoonish when aiming for realistic, realistic when aiming for cartoon, bad perspective, wrong proportion, distorted background, messy background, cluttered background"
+    private val defaultNegative = "worst quality,low quality,ugly,blurry"
     @OptIn(ExperimentalTime::class)
     fun getTalkerResponse(query: String, onCancelled: () -> Unit, onError: (Throwable) -> Unit){
         runCatching {
@@ -67,8 +67,8 @@ class ChatViewModel  : ViewModel() {
                         // 768×1024（竖版人像）/ 1024×768（横版场景）/ 1024×1344（高清竖版）
                         width = 768,
                         height = 1024,
-                        steps = 33,//模型渲染细节的 “迭代次数”，步数越多细节越丰富，但耗时越长（20-30 步性价比最高）
-                        cfg = 9f,// 控制模型 “遵守正向提示词” 的严格程度，数值越高越贴合提示词，越低越自由发挥（7.0-9.0 最常用）
+                        steps = 5,//模型渲染细节的 “迭代次数”，步数越多细节越丰富，但耗时越长（20-30 步性价比最高）
+                        cfg = 2f,// 控制模型 “遵守正向提示词” 的严格程度，数值越高越贴合提示词，越低越自由发挥（7.0-9.0 最常用）
                         seed = Clock.System.now().toEpochMilliseconds()
                     )
 
