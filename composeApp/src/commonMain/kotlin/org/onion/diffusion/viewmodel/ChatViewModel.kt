@@ -109,8 +109,6 @@ class ChatViewModel  : ViewModel() {
             if(exception is CancellationException){
                 onCancelled()
             }else onError(exception)
-            val lastIndex = _currentChatMessages.lastIndex
-            _currentChatMessages.removeAt(lastIndex)
         }
     }
 
@@ -144,5 +142,7 @@ class ChatViewModel  : ViewModel() {
     fun stopGeneration() {
         isGenerating.value = false
         responseGenerationJob?.cancel()
+        val lastIndex = _currentChatMessages.lastIndex
+        _currentChatMessages.removeAt(lastIndex)
     }
 }

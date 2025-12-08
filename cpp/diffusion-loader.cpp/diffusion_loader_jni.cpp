@@ -181,7 +181,7 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeTxt2Img(JNIEnv* env, jobje
 // •jlong handlePtr: 这是最重要的参数。它就是 loadModel 函数最后返回的那个 long 型数字。这个数字本质上是 C++ 对象的内存地址，是连接 Java 世界和特定 C++ 实例的唯一"钥匙"
 ///////////////////////////////////////////////////////////////////////////
 extern "C" JNIEXPORT void JNICALL
-Java_org_onion_diffusion_native_DiffusionLoader_nativeRelease(JNIEnv*, jobject, jlong handlePtr){
+Java_org_onion_diffusion_native_DiffusionLoader_nativeRelease(JNIEnv* env, jobject thiz, jlong handlePtr){
     // loadModel 在失败时会返回 0。如果 Java 代码持有一个为 0 的句柄并尝试调用 destroy，这个检查可以防止后续代码尝试操作一个空地址，从而避免程序崩溃。它直接 return，什么也不做，这是正确的行为
     if (handlePtr == 0) return;
     // 是 loadModel 中 reinterpret_cast<jlong>(handle) 的逆向操作。
