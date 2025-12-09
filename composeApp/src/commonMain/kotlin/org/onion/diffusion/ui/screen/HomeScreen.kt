@@ -89,10 +89,29 @@ import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import minediffusion.composeapp.generated.resources.Res
+import minediffusion.composeapp.generated.resources.ai_avatar
+import minediffusion.composeapp.generated.resources.ai_image
+import minediffusion.composeapp.generated.resources.ask_anything_placeholder
+import minediffusion.composeapp.generated.resources.attachment
+import minediffusion.composeapp.generated.resources.clear
+import minediffusion.composeapp.generated.resources.creating
+import minediffusion.composeapp.generated.resources.error_no_interrupt_api
+import minediffusion.composeapp.generated.resources.error_select_correct_llm_model
+import minediffusion.composeapp.generated.resources.feature_not_available
 import minediffusion.composeapp.generated.resources.ic_avatar_sytem
 import minediffusion.composeapp.generated.resources.ic_avatar_user
+import minediffusion.composeapp.generated.resources.loading
+import minediffusion.composeapp.generated.resources.scroll_to_bottom
+import minediffusion.composeapp.generated.resources.select
+import minediffusion.composeapp.generated.resources.select_llm_model_title
+import minediffusion.composeapp.generated.resources.send_message
+import minediffusion.composeapp.generated.resources.stop_generation
+import minediffusion.composeapp.generated.resources.user_avatar
+import minediffusion.composeapp.generated.resources.user_image
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.onion.diffusion.ui.navigation.route.MainRoute
 import org.onion.diffusion.utils.Animations
@@ -138,7 +157,7 @@ fun HomeScreen() {
                     val file = chatViewModel.selectLLMModelFile()
                     if(file.isBlank()){
                         chatViewModel.loadingModelState.emit(0)
-                        snackbarHostState.showSnackbar("请选择正确的LLM模型文件")
+                        snackbarHostState.showSnackbar(getString(Res.string.error_select_correct_llm_model))
                     }else {
                         chatViewModel.initLLM()
                     }
@@ -150,13 +169,13 @@ fun HomeScreen() {
             modifier = Modifier.align(Alignment.BottomStart),
             onAttachClick = {
                 coroutineScope.launch {
-                    snackbarHostState.showSnackbar("功能暂不可用")
+                    snackbarHostState.showSnackbar(	getString(Res.string.feature_not_available))
                 }
             },
             onSendClick = {
                 if (chatViewModel.isGenerating.value) {
                     coroutineScope.launch {
-                        snackbarHostState.showSnackbar("由于StableDiffusion-CPP未存在中断API,暂不支持中断")
+                        snackbarHostState.showSnackbar(getString(Res.string.error_no_interrupt_api))
                     }
                     //chatViewModel.stopGeneration()
                 } else {
@@ -297,7 +316,7 @@ private fun ScrollToBottomButton(
         ) {
             Icon(
                 imageVector = Icons.Filled.KeyboardDoubleArrowDown,
-                contentDescription = "滚动到底部",
+                contentDescription = stringResource(Res.string.scroll_to_bottom),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(24.dp)
             )
@@ -337,7 +356,7 @@ fun AskAnythingField(
             shape = MaterialTheme.shapes.extraLarge,
             placeholder = {
                 MediumText(
-                    text = "有什么可以帮您？",
+                    text = stringResource(Res.string.ask_anything_placeholder),
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
             },
@@ -376,7 +395,7 @@ private fun AttachIcon(
 ) = IconButton(onAttachClick) {
     Icon(
         imageVector = Icons.Filled.AttachFile,
-        contentDescription = "Attachment",
+        contentDescription = stringResource(Res.string.attachment),
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.size(20.dp)
     )
@@ -391,7 +410,7 @@ private fun ClearIcon(
         IconButton(onClick = onClick) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Clear",
+                contentDescription = stringResource(Res.string.clear),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
             )
@@ -416,7 +435,7 @@ fun SendStopButton(
         Icon(
             imageVector = if (isGenerating) Icons.Filled.Stop
             else Icons.AutoMirrored.Filled.Send,
-            contentDescription = if (isGenerating) "停止生成" else "发送消息",
+            contentDescription = if (isGenerating) 	stringResource(Res.string.stop_generation) else stringResource(Res.string.send_message),
             tint = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.size(20.dp)
         )
@@ -484,7 +503,7 @@ private fun UserIcon() {
     ) {
         Image(
             painter = painterResource(Res.drawable.ic_avatar_user),
-            contentDescription = "User Avatar",
+            contentDescription = stringResource(Res.string.user_avatar),
             modifier = Modifier.size(24.dp)
         )
     }
@@ -503,7 +522,7 @@ private fun AiProviderIcon() {
     ) {
         Image(
             painter = painterResource(Res.drawable.ic_avatar_sytem),
-            contentDescription = "AI Avatar",
+            contentDescription = stringResource(Res.string.ai_avatar),
             modifier = Modifier.size(24.dp)
         )
     }
@@ -528,7 +547,7 @@ private fun UserMessage(message: String, image: ByteArray? = null) {
         if (image != null) {
             AsyncImage(
                 model = image,
-                contentDescription = "User Image",
+                contentDescription = stringResource(Res.string.user_image),
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -562,7 +581,7 @@ private fun AiMessage(
             if (image != null) {
                 AsyncImage(
                     model = image,
-                    contentDescription = "AI Image",
+                    contentDescription = stringResource(Res.string.ai_image),
                     alignment = Alignment.Center,
                     contentScale = ContentScale.Inside,
                     modifier = Modifier
@@ -628,7 +647,7 @@ fun LLMFileSelectTipDialog(
 
                     // Title
                     MediumText(
-                        text = "选择你的LLM模型",
+                        text = stringResource(Res.string.select_llm_model_title),
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF00BCD4), // Adjust color to match your design
@@ -655,7 +674,7 @@ fun LLMFileSelectTipDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent) // Make button background transparent
                     ) {
                         Text(
-                            text = if(loadingState == 1) "加载中..."  else "选择",
+                            text = if(loadingState == 1) stringResource(Res.string.loading)  else 	stringResource(Res.string.select),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
@@ -786,7 +805,7 @@ private fun MagicLoadingAnimation() {
             verticalAlignment = Alignment.Bottom
         ) {
             Text(
-                text = "Creating",
+                text = stringResource(Res.string.creating),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 fontWeight = FontWeight.Normal

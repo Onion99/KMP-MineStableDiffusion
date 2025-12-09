@@ -5,4 +5,21 @@
     <string name="unknown">unknown</string>
     <string name="light_theme">Light Theme</string>
     <string name="dark_theme">Dark Theme</string>
+    <string name="error_select_correct_llm_model">Please select a valid LLM model file</string>
+    <string name="feature_not_available">Feature not available</string>
+    <string name="error_no_interrupt_api">Interruption not supported due to missing API in StableDiffusion-CPP</string>
+    <string name="scroll_to_bottom">Scroll to bottom</string>
+    <string name="ask_anything_placeholder">Please enter your prompt word, format: prompt word | negative prompt word</string>
+    <string name="attachment">Attachment</string>
+    <string name="clear">Clear</string>
+    <string name="stop_generation">Stop generation</string>
+    <string name="send_message">Send message</string>
+    <string name="user_avatar">User Avatar</string>
+    <string name="ai_avatar">AI Avatar</string>
+    <string name="user_image">User Image</string>
+    <string name="ai_image">AI Image</string>
+    <string name="select_llm_model_title">Select Your LLM Model</string>
+    <string name="loading">Loading...</string>
+    <string name="select">Select</string>
+    <string name="creating">Creating</string>
 </resources>

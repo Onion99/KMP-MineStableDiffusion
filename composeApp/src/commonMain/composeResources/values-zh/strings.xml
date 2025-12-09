@@ -4,4 +4,21 @@
     <string name="setting">设置</string>
     <string name="light_theme">亮色主題</string>
     <string name="dark_theme">暗色主題</string>
+    <string name="error_select_correct_llm_model">请选择正确的LLM模型文件</string>
+    <string name="feature_not_available">功能暂不可用</string>
+    <string name="error_no_interrupt_api">由于StableDiffusion-CPP未存在中断API,暂不支持中断</string>
+    <string name="scroll_to_bottom">滚动到底部</string>
+    <string name="ask_anything_placeholder">请输入你的提示词,格式:提示词|负向提示词</string>
+    <string name="attachment">附件</string>
+    <string name="clear">清除</string>
+    <string name="stop_generation">停止生成</string>
+    <string name="send_message">发送消息</string>
+    <string name="user_avatar">用户头像</string>
+    <string name="ai_avatar">AI头像</string>
+    <string name="user_image">用户图片</string>
+    <string name="ai_image">AI图片</string>
+    <string name="select_llm_model_title">选择你的LLM模型</string>
+    <string name="loading">加载中...</string>
+    <string name="select">选择</string>
+    <string name="creating">创建中</string>
 </resources>
