@@ -18,7 +18,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
     
@@ -158,6 +158,55 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.onion.diffusion"
             packageVersion = "1.0.0"
+
+            targetFormats(
+                TargetFormat.Dmg,
+                TargetFormat.Msi,
+                TargetFormat.Exe,
+                TargetFormat.Deb,
+                TargetFormat.Rpm
+            )
+
+            packageName = "MineStableDiffusion"
+            packageVersion = libs.versions.app.version.get()
+            vendor = "Onion"
+            licenseFile.set(rootProject.rootDir.resolve("LICENSE"))
+            modules(
+                "jdk.unsupported",
+                "java.instrument"
+            )
+
+            linux {
+                iconFile.set(rootProject.file("docs/AppIcon.png"))
+            }
+            windows {
+                iconFile.set(rootProject.file("docs/AppIcon.ico"))
+                dirChooser = true
+                perUserInstall = true
+            }
+            macOS {
+                iconFile.set(rootProject.file("docs/AppIcon.icns"))
+                bundleID = "org.onion.diffusion"
+                appCategory = "public.app-category.productivity"
+                jvmArgs += listOf(
+                    "-Dapple.awt.application.name=MineStableDiffusion",
+                    "-Dsun.java2d.metal=true",
+                    "--add-opens=java.desktop/sun.lwawt=ALL-UNNAMED",
+                    "--add-opens=java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
+                )
+            }
+        }
+
+        jvmArgs += listOf(
+            "-XX:+UseZGC",
+            "-XX:SoftMaxHeapSize=4096m",
+            "--add-opens=java.desktop/java.awt.peer=ALL-UNNAMED",
+            "--add-opens=java.desktop/sun.awt=ALL-UNNAMED"
+        )
+
+        buildTypes.release.proguard {
+            version.set("7.7.0")
+            configurationFiles.from("proguard-rules.pro")
         }
     }
 }

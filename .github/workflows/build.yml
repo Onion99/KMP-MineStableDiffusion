@@ -93,9 +93,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: ios
-            task: ./gradlew buildReleaseIpa
-            path: composeApp/build/archives/release/*.ipa
+#          - name: ios
+#            task: ./gradlew buildReleaseIpa
+#            path: composeApp/build/archives/release/*.ipa
           - name: android
             task: ./gradlew assembleRelease
             path: composeApp/build/outputs/apk/release/*.apk
@@ -372,8 +372,8 @@ jobs:
           EOF
 
           # Copy icon if exists
-          if [ -f "composeApp/desktopAppIcons/LinuxIcon.png" ]; then
-            cp composeApp/desktopAppIcons/LinuxIcon.png AppDir/KMP-MineStableDiffusion.png
+          if [ -f "docs/AppIcon.png" ]; then
+            cp docs/AppIcon.png AppDir/KMP-MineStableDiffusion.png
           fi
 
           # Fix permissions
