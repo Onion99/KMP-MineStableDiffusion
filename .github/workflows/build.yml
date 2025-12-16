@@ -361,14 +361,14 @@ jobs:
 
           # Prepare AppDir
           mkdir -p AppDir/usr
-          cp -r linux-${{ matrix.arch }}/app/KMP-MineStableDiffusion/* AppDir/usr
+          cp -r linux-${{ matrix.arch }}/app/MineStableDiffusion/* AppDir/usr
 
           # Create desktop file
-          cat > AppDir/KMP-MineStableDiffusion.desktop << 'EOF'
+          cat > AppDir/MineStableDiffusion.desktop << 'EOF'
           [Desktop Entry]
-          Name=KMP-MineStableDiffusion
-          Exec=KMP-MineStableDiffusion
-          Icon=KMP-MineStableDiffusion
+          Name=MineStableDiffusion
+          Exec=MineStableDiffusion
+          Icon=MineStableDiffusion
           Terminal=false
           Type=Application
           Categories=Utility;
@@ -381,23 +381,23 @@ jobs:
           HERE=${SELF%/*}
           export PATH="${HERE}/usr/bin/:${PATH}"
           export LD_LIBRARY_PATH="${HERE}/usr/lib/:${LD_LIBRARY_PATH}"
-          exec "${HERE}/usr/bin/KMP-MineStableDiffusion" "$@"
+          exec "${HERE}/usr/bin/MineStableDiffusion" "$@"
           EOF
 
           # Copy icon if exists
           if [ -f "docs/AppIcon.png" ]; then
-            cp docs/AppIcon.png AppDir/KMP-MineStableDiffusion.png
+            cp docs/AppIcon.png AppDir/MineStableDiffusion.png
           fi
 
           # Fix permissions
           chmod a+x AppDir/AppRun
-          chmod a+x AppDir/usr/bin/KMP-MineStableDiffusion
+          chmod a+x AppDir/usr/bin/MineStableDiffusion
 
           # Build AppImage
           ARCH=${{ matrix.arch }} ./${{ matrix.appimagetool }} AppDir
           
           # Rename AppImage with base name from DMG
-          mv KMP-MineStableDiffusion-${{ matrix.arch }}.AppImage ${BASE_NAME}-linux-${{ matrix.arch }}.AppImage
+          mv MineStableDiffusion-${{ matrix.arch }}.AppImage ${BASE_NAME}-linux-${{ matrix.arch }}.AppImage
           chmod a+x ${BASE_NAME}-linux-${{ matrix.arch }}.AppImage
 
       - name: Upload AppImage artifact
