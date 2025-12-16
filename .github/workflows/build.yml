@@ -134,6 +134,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
+      # [添加] 安装 Vulkan SDK
+      - name: Install Vulkan SDK
+        if: ${{ matrix.name == 'android' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y vulkan-sdk
+
       - name: Setup Signing
         id: sign
         if: ${{ matrix.name == 'android' }}
