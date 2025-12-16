@@ -113,7 +113,7 @@ jobs:
             task: ./gradlew assembleRelease
             path: composeApp/build/outputs/apk/release/*.apk
 
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     name: Build ${{ matrix.name }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -136,16 +136,12 @@ jobs:
 
 
       # [修改] 完整安装 Vulkan SDK 的步骤
-      - name: Install Vulkan SDK
-        if: ${{ matrix.name == 'android' }}
+      - name: Install Vulkan SDK (macOS)
         run: |
-          # 1. 下载并运行 LunarG 官方的安装脚本
-          wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
-          sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-`lsb_release -cs`.list https://packages.lunarg.com/vulkan/`lsb_release -cs`.list
-          # 2. 更新包列表以包含新的 PPA
-          sudo apt-get update    
-          # 3. 安装 Vulkan SDK
-          sudo apt-get install -y vulkan-sdk
+          curl -O https://sdk.lunarg.com/sdk/download/1.3.268.0/mac/vulkansdk-macos-1.3.268.0.dmg
+          # 这里需要静默安装或解压其中的 glslc 工具并添加到 PATH
+          # 或者使用更简单的 brew 安装 (如果可用)
+          brew install molten-vk
 
 
       - name: Setup Signing
