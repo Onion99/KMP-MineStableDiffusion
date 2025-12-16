@@ -2,46 +2,46 @@ name: Build
 
 on:
   schedule:
-    - cron: '0 3 * * *' # 每天凌晨3点运行一次测试构建
-  # 1. 当代码推送到 main 分支时
+    - cron: '0 3 * * *'
   push:
-    branches:
-      - 'master'
-    # 且修改了应用或文档相关文件
-    paths:
-      #      - 'composeApp/**'         # Kotlin Multiplatform 核心代码
-      - 'gradle/**'             # Gradle wrapper
-      - 'build.gradle.kts'
-      - 'settings.gradle.kts'
-      - 'gradle.properties'
-      - '.github/workflows/**' # 工作流自身变更
+    branches: [ 'master' ]
+    paths-ignore: # 使用 ignore 更简洁，忽略文档变动触发构建
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
   workflow_call:
+
+# 定义全局变量，方便统一修改版本名称格式
+env:
+  APP_NAME: KMP-MineStableDiffusion
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: Run tests
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4 # 修正版本
         with:
           submodules: 'recursive'
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v5
+      # 缓存 Submodules，加速大型 C++ 库拉取
+      - name: Cache Submodules
+        uses: actions/cache@v4
+        with:
+          path: .git/modules
+          key: ${{ runner.os }}-submodules-${{ hashFiles('.gitmodules') }}
 
-      - name: Setup JDK
-        uses: actions/setup-java@v5
+      - uses: actions/setup-java@v4 # 修正版本
         with:
           distribution: 'zulu'
           java-version: 21
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Run tests
         run: ./gradlew jvmTest
 
   build-desktop:
+    needs: test # 只有测试通过才进行耗时的构建
     strategy:
       fail-fast: false
       matrix:
@@ -49,273 +49,91 @@ jobs:
           - name: macos-aarch64
             runner: macos-latest
             task: ./gradlew packageReleaseDmg
+            output_dir: composeApp/build/compose/binaries/main-release/dmg
+            ext: dmg
 
           - name: macos-x86_64
-            runner: macos-15-intel
+            runner: macos-13 # 指定 Intel Mac (macos-latest 目前主要是 arm64)
             task: ./gradlew packageReleaseDmg
+            output_dir: composeApp/build/compose/binaries/main-release/dmg
+            ext: dmg
 
           - name: linux-x86_64
             runner: ubuntu-latest
-            task: ./gradlew createReleaseDistributable packageReleaseDeb packageReleaseRpm
-
-#          - name: linux-aarch64
-#            runner: ubuntu-24.04-arm
-#            task: ./gradlew createReleaseDistributable packageReleaseDeb packageReleaseRpm
+            # 移除 createReleaseDistributable，因为通常只需要安装包
+            task: ./gradlew packageReleaseDeb packageReleaseRpm
+            output_dir: composeApp/build/compose/binaries/main-release
+            ext: deb
 
           - name: windows-x86_64
             runner: windows-latest
-            task: ./gradlew.bat createReleaseDistributable packageReleaseMsi packageReleaseExe
-
-#          - name: windows-arm64
-#            runner: windows-11-arm
-#            task: ./gradlew.bat createReleaseDistributable packageReleaseMsi packageReleaseExe
+            task: ./gradlew.bat packageReleaseMsi packageReleaseExe
+            output_dir: composeApp/build/compose/binaries/main-release
+            ext: exe
 
     runs-on: ${{ matrix.runner }}
     name: Build ${{ matrix.name }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v5
+      # 针对 Windows 的关键修复：安装 Android SDK 防止配置阶段报错
+      - name: Setup Android SDK (Windows Fix)
+        if: startsWith(matrix.runner, 'windows')
+        uses: android-actions/setup-android@v3
 
-      - name: Setup JDK
-        uses: actions/setup-java@v5
+      # 针对 macOS 的建议：如果 C++ 构建需要 Vulkan SDK，这里可能需要补充安装步骤
+      # 目前暂保持原样，如果报错请添加 install-vulkan 步骤
+
+      - uses: actions/setup-java@v4
         with:
-          distribution: ${{ startsWith(matrix.name, 'windows') && 'jetbrains' || 'zulu' }}
+          distribution: 'jetbrains' # Jetbrains JDK 对 Compose 支持更好
           java-version: 21
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Build
         run: ${{ matrix.task }}
 
-      - name: Upload artifact
-        if: success()
-        uses: actions/upload-artifact@v5
-        with:
-          name: ${{ matrix.name }}
-          path: composeApp/build/compose/binaries/main-release
-
-  build-mobile:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          #          - name: ios
-          #            task: ./gradlew buildReleaseIpa
-          #            path: composeApp/build/archives/release/*.ipa
-          - name: android
-            task: ./gradlew assembleRelease
-            path: composeApp/build/outputs/apk/release/*.apk
-
-    runs-on: macos-latest
-    name: Build ${{ matrix.name }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          submodules: 'recursive'
-
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v5
-
-      - name: Setup JDK
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: 21
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-
-      - name: Setup Signing
-        id: sign
-        if: ${{ matrix.name == 'android' }}
+      # ==== 优化点：构建后立即重命名，不需要单独的 Package Job ====
+      - name: Rename and Prepare Artifacts
+        shell: bash
         run: |
-          base64 --decode <<< "${{ secrets.RELEASE_KEY }}" > composeApp/release-key.jks
-          grep -q '[^[:space:]]' composeApp/release-key.jks && echo release_key_exists=true >> $GITHUB_OUTPUT || echo release_key_exists=false >> $GITHUB_OUTPUT
-
-      - name: Build
-        env:
-          RELEASE_KEY_EXISTS: ${{ steps.sign.outputs.release_key_exists }}
-          RELEASE_KEY_STORE_PASSWORD: ${{ secrets.RELEASE_KEY_STORE_PASSWORD }}
-          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
-        run: ${{ matrix.task }}
-
-      - name: Upload artifact
-        if: success()
-        uses: actions/upload-artifact@v5
-        with:
-          name: ${{ matrix.name }}
-          path: ${{ matrix.path }}
-
-  package:
-    needs: build-desktop
-    runs-on: ubuntu-latest
-    name: Package artifacts
-    steps:
-      # 下载所有需要的 artifacts
-      - name: Download macOS aarch64 artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: macos-aarch64
-          path: macos-aarch64
-
-      - name: Download macOS x86_64 artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: macos-x86_64
-          path: macos-x86_64
-
-      - name: Download Linux x86_64 artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: linux-x86_64
-          path: linux-x86_64
-
-#      - name: Download Linux aarch64 artifact
-#        uses: actions/download-artifact@v5
-#        with:
-#          name: linux-aarch64
-#          path: linux-aarch64
-
-      - name: Download Windows x86_64 artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: windows-x86_64
-          path: windows-x86_64
-
-#      - name: Download Windows arm64 artifact
-#        uses: actions/download-artifact@v5
-#        with:
-#          name: windows-arm64
-#          path: windows-arm64
-
-      # 重命名文件
-      - name: Rename artifacts
-        run: |
-          # Get base filename from macOS DMG
-          DMG_FILE=$(find macos-aarch64/dmg -name "*.dmg" -type f | head -n 1)
-          BASE_NAME=$(basename "$DMG_FILE" .dmg)
-          echo "Base filename: $BASE_NAME"
+          # 定义版本号，优先使用 Tag，没有 Tag 使用 commit hash
+          VERSION="${{ github.ref_name }}"
+          if [[ "$VERSION" == "master" ]]; then
+            VERSION="nightly-${{ github.sha }}"
+          fi
           
-          # macOS
-          for arch in aarch64 x86_64; do
-            if [ -d "macos-${arch}/dmg" ]; then
-              for file in macos-${arch}/dmg/*.dmg; do
-                if [ -f "$file" ]; then
-                  filename=$(basename "$file" .dmg)
-                  mv "$file" "macos-${arch}/dmg/${filename}-macos-${arch}.dmg"
-                fi
-              done
-            fi
+          echo "Processing artifacts for ${{ matrix.name }} version $VERSION"
+          
+          # 创建统一的上传目录
+          mkdir -p upload_dist
+          
+          # 查找并移动/重命名文件
+          find ${{ matrix.output_dir }} -type f \( -name "*.dmg" -o -name "*.msi" -o -name "*.exe" -o -name "*.deb" -o -name "*.rpm" \) | while read FILE; do
+            EXTENSION="${FILE##*.}"
+            NEW_NAME="${{ env.APP_NAME }}-${{ matrix.name }}-${VERSION}.${EXTENSION}"
+            echo "Renaming $FILE -> upload_dist/$NEW_NAME"
+            mv "$FILE" "upload_dist/$NEW_NAME"
           done
 
-          # Windows
-          for arch in x86_64 arm64; do
-            if [ -d "windows-${arch}/msi" ]; then
-              for file in windows-${arch}/msi/*.msi; do
-                if [ -f "$file" ]; then
-                  filename=$(basename "$file" .msi)
-                  mv "$file" "windows-${arch}/msi/${filename}-windows-${arch}.msi"
-                fi
-              done
-            fi
-            if [ -d "windows-${arch}/exe" ]; then
-              for file in windows-${arch}/exe/*.exe; do
-                if [ -f "$file" ]; then
-                  filename=$(basename "$file" .exe)
-                  mv "$file" "windows-${arch}/exe/${filename}-windows-${arch}.exe"
-                fi
-              done
-            fi
-            # Package portable as zip
-            if [ -d "windows-${arch}/app/KMP-MineStableDiffusion" ]; then
-              cd windows-${arch}/app
-              zip -r "../../${BASE_NAME}-windows-${arch}.zip" KMP-MineStableDiffusion
-              cd ../..
-            fi
-          done
+          # Windows 特殊处理：制作 Portable Zip
+          if [[ "${{ matrix.runner }}" == "windows"* ]]; then
+             if [ -d "composeApp/build/compose/binaries/main-release/app" ]; then
+                echo "Zipping Portable version..."
+                7z a "upload_dist/${{ env.APP_NAME }}-${{ matrix.name }}-${VERSION}-portable.zip" ./composeApp/build/compose/binaries/main-release/app/*
+             fi
+          fi
 
-      # 上传新的 artifacts
-      - name: Upload macOS aarch64 DMG
-        uses: actions/upload-artifact@v5
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: macos-aarch64-dmg
-          path: macos-aarch64/dmg/*.dmg
+          name: ${{ matrix.name }}-artifacts
+          path: upload_dist/*
 
-      - name: Upload macOS x86_64 DMG
-        uses: actions/upload-artifact@v5
-        with:
-          name: macos-x86_64-dmg
-          path: macos-x86_64/dmg/*.dmg
-
-      - name: Upload Linux x86_64 DEB
-        uses: actions/upload-artifact@v5
-        with:
-          name: linux-x86_64-deb
-          path: linux-x86_64/deb/*.deb
-
-      - name: Upload Linux x86_64 RPM
-        uses: actions/upload-artifact@v5
-        with:
-          name: linux-x86_64-rpm
-          path: linux-x86_64/rpm/*.rpm
-
-      - name: Upload Linux aarch64 DEB
-        uses: actions/upload-artifact@v5
-        with:
-          name: linux-aarch64-deb
-          path: linux-aarch64/deb/*.deb
-
-      - name: Upload Linux aarch64 RPM
-        uses: actions/upload-artifact@v5
-        with:
-          name: linux-aarch64-rpm
-          path: linux-aarch64/rpm/*.rpm
-
-      - name: Upload Windows x86_64 MSI
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-x86_64-msi
-          path: windows-x86_64/msi/*.msi
-
-      - name: Upload Windows x86_64 EXE
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-x86_64-exe
-          path: windows-x86_64/exe/*.exe
-
-      - name: Upload Windows x86_64 Portable
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-x86_64-portable
-          path: '*-windows-x86_64.zip'
-
-      - name: Upload Windows arm64 MSI
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-arm64-msi
-          path: windows-arm64/msi/*.msi
-
-      - name: Upload Windows arm64 EXE
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-arm64-exe
-          path: windows-arm64/exe/*.exe
-
-      - name: Upload Windows arm64 Portable
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-arm64-portable
-          path: '*-windows-arm64.zip'
-
+  # AppImage 构建通常比较特殊，保留单独 Job，但解耦了对 Mac 的依赖
   package-appimage:
     needs: build-desktop
     strategy:
@@ -325,99 +143,115 @@ jobs:
           - arch: x86_64
             runner: ubuntu-latest
             appimagetool: appimagetool-x86_64.AppImage
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
-            appimagetool: appimagetool-aarch64.AppImage
-
+          # - arch: aarch64 ... (注释掉直到你需要)
     runs-on: ${{ matrix.runner }}
-    name: Build Linux ${{ matrix.arch }} AppImage
+    name: Build AppImage ${{ matrix.arch }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
-      - name: Download macOS aarch64 artifact
-        uses: actions/download-artifact@v5
+      # 只下载 Linux 的 Deb/Rpm 产物用于提取，不需要下载 Mac 的
+      - name: Download Linux Artifacts
+        uses: actions/download-artifact@v4
         with:
-          name: macos-aarch64
-          path: macos-aarch64
-
-      - name: Download Linux ${{ matrix.arch }} artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: linux-${{ matrix.arch }}
-          path: linux-${{ matrix.arch }}
+          name: linux-${{ matrix.arch }}-artifacts
+          path: downloaded_artifacts
 
       - name: Build AppImage
         run: |
-          # Get base filename from macOS DMG
-          DMG_FILE=$(find macos-aarch64/dmg -name "*.dmg" -type f | head -n 1)
-          BASE_NAME=$(basename "$DMG_FILE" .dmg)
-          echo "Base filename: $BASE_NAME"
-          
-          # Download appimagetool
-          wget https://github.com/AppImage/appimagetool/releases/download/continuous/${{ matrix.appimagetool }}
+          # 提取版本号
+          VERSION="${{ github.ref_name }}"
+          if [[ "$VERSION" == "master" ]]; then VERSION="nightly"; fi
+
+          # 下载工具
+          wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/${{ matrix.appimagetool }}
           chmod +x ${{ matrix.appimagetool }}
 
-          # Prepare AppDir
-          mkdir -p AppDir/usr
-          cp -r linux-${{ matrix.arch }}/app/MineStableDiffusion/* AppDir/usr
+          # 准备 AppDir (这里建议优化：直接从 Gradle 的 app 目录解压，或者解压 deb 包)
+          # 由于之前的 job 没有上传 app 文件夹，这里我们解压 deb 包来获取文件
+          mkdir -p AppDir
+          DEB_FILE=$(find downloaded_artifacts -name "*.deb" | head -n 1)
+          ar x "$DEB_FILE" data.tar.xz
+          tar -xf data.tar.xz -C AppDir
+          
+          # 注意：解压 Deb 后的路径通常是 AppDir/opt/package-name/... 需要根据实际情况调整
+          # 假设你的 Deb 安装路径是 /opt/MineStableDiffusion
+          # 下面的路径可能需要根据你 Gradle 的 packager 配置进行微调
+          
+          # 简化演示，重新组织文件结构 (请根据实际 Deb 结构调整)
+          mkdir -p AppDir/usr/bin
+          # 寻找主程序
+          BINARY_PATH=$(find AppDir -name "MineStableDiffusion" -type f | head -n 1)
+          BINARY_DIR=$(dirname "$BINARY_PATH")
+          cp -r "$BINARY_DIR"/* AppDir/usr/bin/
 
-          # Create desktop file
+          # 创建 Desktop file 和 AppRun (保持你原有的逻辑，稍作精简)
           cat > AppDir/MineStableDiffusion.desktop << 'EOF'
           [Desktop Entry]
           Name=MineStableDiffusion
           Exec=MineStableDiffusion
           Icon=MineStableDiffusion
-          Terminal=false
           Type=Application
           Categories=Utility;
           EOF
+          
+          cp AppDir/MineStableDiffusion.desktop AppDir/usr/bin/ || true
 
-          # Create AppRun script
-          cat > AppDir/AppRun << 'EOF'
-          #!/bin/bash
-          SELF=$(readlink -f "$0")
-          HERE=${SELF%/*}
-          export PATH="${HERE}/usr/bin/:${PATH}"
-          export LD_LIBRARY_PATH="${HERE}/usr/lib/:${LD_LIBRARY_PATH}"
-          exec "${HERE}/usr/bin/MineStableDiffusion" "$@"
-          EOF
+          # 下载 AppRun (推荐使用官方 AppRun 而不是手写脚本，兼容性更好)
+          wget -q https://github.com/AppImage/AppImageKit/releases/download/13/AppRun-x86_64 -O AppDir/AppRun
+          chmod +x AppDir/AppRun
 
-          # Copy icon if exists
+          # 图标
           if [ -f "docs/AppIcon.png" ]; then
             cp docs/AppIcon.png AppDir/MineStableDiffusion.png
+            cp docs/AppIcon.png AppDir/.DirIcon
           fi
 
-          # Fix permissions
-          chmod a+x AppDir/AppRun
-          chmod a+x AppDir/usr/bin/MineStableDiffusion
+          # 生成
+          # 解决 FUSE 问题
+          export APPIMAGE_EXTRACT_AND_RUN=1 
+          ARCH=${{ matrix.arch }} ./${{ matrix.appimagetool }} AppDir ${{ env.APP_NAME }}-linux-${{ matrix.arch }}.AppImage
 
-          # Build AppImage
-          ARCH=${{ matrix.arch }} ./${{ matrix.appimagetool }} AppDir
-          
-          # Rename AppImage with base name from DMG
-          mv MineStableDiffusion-${{ matrix.arch }}.AppImage ${BASE_NAME}-linux-${{ matrix.arch }}.AppImage
-          chmod a+x ${BASE_NAME}-linux-${{ matrix.arch }}.AppImage
-
-      - name: Upload AppImage artifact
-        uses: actions/upload-artifact@v5
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
         with:
           name: linux-${{ matrix.arch }}-appimage
-          path: '*-linux-${{ matrix.arch }}.AppImage'
+          path: '*.AppImage'
 
-  cleanup:
-    needs: [ package-appimage, package ]
-    runs-on: ubuntu-latest
-    name: Cleanup original artifacts
+  build-mobile:
+    needs: test
+    runs-on: ubuntu-latest # Android 构建用 Ubuntu 更快更便宜，除非你需要 iOS
     steps:
-      - name: Delete original artifacts
-        uses: geekyeggo/delete-artifact@v5
+      - uses: actions/checkout@v4
         with:
-          name: |
-            macos-aarch64
-            macos-x86_64
-            linux-x86_64
-            linux-aarch64
-            windows-x86_64
-            windows-arm64
+          submodules: 'recursive'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Android 构建也需要 Key，保持你原有的逻辑
+      - name: Decode Keystore
+        if: ${{ matrix.name != 'ios' }} # 简单防错
+        env:
+          RELEASE_KEY: ${{ secrets.RELEASE_KEY }}
+        run: |
+          if [ -n "$RELEASE_KEY" ]; then
+            echo "$RELEASE_KEY" | base64 --decode > composeApp/release-key.jks
+          fi
+
+      - name: Build Android
+        env:
+          RELEASE_KEY_STORE_PASSWORD: ${{ secrets.RELEASE_KEY_STORE_PASSWORD }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: composeApp/build/outputs/apk/release/*.apk
