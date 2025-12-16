@@ -179,11 +179,7 @@ jobs:
           name: linux-x86_64
           path: linux-x86_64
 
-      #      - name: Download Linux aarch64 artifact
-      #        uses: actions/download-artifact@v5
-      #        with:
-      #          name: linux-aarch64
-      #          path: linux-aarch64
+
 
       - name: Download Windows x86_64 artifact
         uses: actions/download-artifact@v5
@@ -268,18 +264,6 @@ jobs:
           name: linux-x86_64-rpm
           path: linux-x86_64/rpm/*.rpm
 
-      - name: Upload Linux aarch64 DEB
-        uses: actions/upload-artifact@v5
-        with:
-          name: linux-aarch64-deb
-          path: linux-aarch64/deb/*.deb
-
-      - name: Upload Linux aarch64 RPM
-        uses: actions/upload-artifact@v5
-        with:
-          name: linux-aarch64-rpm
-          path: linux-aarch64/rpm/*.rpm
-
       - name: Upload Windows x86_64 MSI
         uses: actions/upload-artifact@v5
         with:
@@ -298,24 +282,6 @@ jobs:
           name: windows-x86_64-portable
           path: '*-windows-x86_64.zip'
 
-      - name: Upload Windows arm64 MSI
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-arm64-msi
-          path: windows-arm64/msi/*.msi
-
-      - name: Upload Windows arm64 EXE
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-arm64-exe
-          path: windows-arm64/exe/*.exe
-
-      - name: Upload Windows arm64 Portable
-        uses: actions/upload-artifact@v5
-        with:
-          name: windows-arm64-portable
-          path: '*-windows-arm64.zip'
-
   package-appimage:
     needs: build-desktop
     strategy:
@@ -325,9 +291,6 @@ jobs:
           - arch: x86_64
             runner: ubuntu-latest
             appimagetool: appimagetool-x86_64.AppImage
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
-            appimagetool: appimagetool-aarch64.AppImage
 
     runs-on: ${{ matrix.runner }}
     name: Build Linux ${{ matrix.arch }} AppImage
