@@ -134,12 +134,19 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
-      # [添加] 安装 Vulkan SDK
+
+      # [修改] 完整安装 Vulkan SDK 的步骤
       - name: Install Vulkan SDK
         if: ${{ matrix.name == 'android' }}
         run: |
-          sudo apt-get update
+          # 1. 下载并运行 LunarG 官方的安装脚本
+          wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
+          sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-`lsb_release -cs`.list https://packages.lunarg.com/vulkan/`lsb_release -cs`.list
+          # 2. 更新包列表以包含新的 PPA
+          sudo apt-get update    
+          # 3. 安装 Vulkan SDK
           sudo apt-get install -y vulkan-sdk
+
 
       - name: Setup Signing
         id: sign
