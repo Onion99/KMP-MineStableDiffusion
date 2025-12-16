@@ -135,13 +135,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
 
-      # [修改] 完整安装 Vulkan SDK 的步骤
-      - name: Install Vulkan SDK (macOS)
-        run: |
-          curl -O https://sdk.lunarg.com/sdk/download/1.3.268.0/mac/vulkansdk-macos-1.3.268.0.dmg
-          # 这里需要静默安装或解压其中的 glslc 工具并添加到 PATH
-          # 或者使用更简单的 brew 安装 (如果可用)
-          brew install molten-vk
+      # [修改] 使用 setup-vulkan Action 来安装 Vulkan SDK
+      - name: Install Vulkan SDK
+        uses: humbletim/install-vulkan-sdk@v1.2
+        with:
+          version: 1.4.309.0
+          cache: true
 
 
       - name: Setup Signing
