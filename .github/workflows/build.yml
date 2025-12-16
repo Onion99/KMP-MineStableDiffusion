@@ -113,7 +113,7 @@ jobs:
             task: ./gradlew assembleRelease
             path: composeApp/build/outputs/apk/release/*.apk
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     name: Build ${{ matrix.name }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -138,16 +138,9 @@ jobs:
         id: sign
         if: ${{ matrix.name == 'android' }}
         run: |
-#          base64 --decode <<< "${{ secrets.RELEASE_KEY }}" > composeApp/release.jks
-#          grep -q '[^[:space:]]' composeApp/release.jks && echo release_key_exists=true >> $GITHUB_OUTPUT || echo release_key_exists=false >> $GITHUB_OUTPUT
-          # 上面mac环境,这里runner是Windows,走windows环境处理 将 secrets 解码并写入文件
-          echo "${{ secrets.RELEASE_KEY }}" | base64 --decode > composeApp/release.jks
-          # 检查文件是否成功创建且非空，然后设置输出变量 
-          if [ -s composeApp/release.jks ]; then
-            echo "release_key_exists=true" >> $GITHUB_OUTPUT
-          else
-          echo "release_key_exists=false" >> $GITHUB_OUTPUT
-          fi
+          base64 --decode <<< "${{ secrets.RELEASE_KEY }}" > composeApp/release.jks
+          grep -q '[^[:space:]]' composeApp/release.jks && echo release_key_exists=true >> $GITHUB_OUTPUT || echo release_key_exists=false >> $GITHUB_OUTPUT
+
       - name: Build
         env:
           RELEASE_KEY_EXISTS: ${{ steps.sign.outputs.release_key_exists }}
