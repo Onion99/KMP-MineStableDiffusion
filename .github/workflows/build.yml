@@ -138,14 +138,14 @@ jobs:
         id: sign
         if: ${{ matrix.name == 'android' }}
         run: |
-          base64 --decode <<< "${{ secrets.RELEASE_KEY }}" > composeApp/release-key.jks
-          grep -q '[^[:space:]]' composeApp/release-key.jks && echo release_key_exists=true >> $GITHUB_OUTPUT || echo release_key_exists=false >> $GITHUB_OUTPUT
+          base64 --decode <<< "${{ secrets.RELEASE_KEY }}" > composeApp/release.jks
+          grep -q '[^[:space:]]' composeApp/release.jks && echo release_key_exists=true >> $GITHUB_OUTPUT || echo release_key_exists=false >> $GITHUB_OUTPUT
 
       - name: Build
         env:
           RELEASE_KEY_EXISTS: ${{ steps.sign.outputs.release_key_exists }}
-          RELEASE_KEY_STORE_PASSWORD: ${{ secrets.RELEASE_KEY_STORE_PASSWORD }}
-          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          RELEASE_KEY_STORE_PASSWORD: ${{ nova9999 }}
+          RELEASE_KEY_PASSWORD: ${{ nova9999 }}
         run: ${{ matrix.task }}
 
       - name: Upload artifact

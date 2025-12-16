@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.util.Locale
+import java.lang.System.getenv
 
 plugins {
     id("android-application-convention")
@@ -127,6 +128,19 @@ android {
             abiFilters += "arm64-v8a"
         }
     }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("release.jks")
+            storePassword = getenv("RELEASE_KEY_STORE_PASSWORD")
+            keyAlias = "nova"
+            keyPassword = getenv("RELEASE_KEY_STORE_PASSWORD")
+            enableV1Signing = false
+            enableV2Signing = true
+            enableV3Signing = true
+        }
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
