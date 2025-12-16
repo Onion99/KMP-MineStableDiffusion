@@ -58,17 +58,17 @@ jobs:
             runner: ubuntu-latest
             task: ./gradlew createReleaseDistributable packageReleaseDeb packageReleaseRpm
 
-          - name: linux-aarch64
-            runner: ubuntu-24.04-arm
-            task: ./gradlew createReleaseDistributable packageReleaseDeb packageReleaseRpm
+#          - name: linux-aarch64
+#            runner: ubuntu-24.04-arm
+#            task: ./gradlew createReleaseDistributable packageReleaseDeb packageReleaseRpm
 
           - name: windows-x86_64
             runner: windows-latest
             task: ./gradlew.bat createReleaseDistributable packageReleaseMsi packageReleaseExe
 
-          - name: windows-arm64
-            runner: windows-11-arm
-            task: ./gradlew.bat createReleaseDistributable packageReleaseMsi packageReleaseExe
+#          - name: windows-arm64
+#            runner: windows-11-arm
+#            task: ./gradlew.bat createReleaseDistributable packageReleaseMsi packageReleaseExe
 
     runs-on: ${{ matrix.runner }}
     name: Build ${{ matrix.name }}
@@ -90,10 +90,6 @@ jobs:
       # ✅ 新增：增加 Android SDK,避免部分Runner找不到 ANDROID_HOME environment variable
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with:
-            api-level: 34
-            target: android-34
-            components: build-tools;34.0.0
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
