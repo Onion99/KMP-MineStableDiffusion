@@ -1,3 +1,8 @@
+
+<div align="center">
+<img src="./docs/icon_d.svg" width="200" alt="Project logo"/>
+</div>
+
 <div align="center">
 
 # Mine StableDiffusion 🐯
