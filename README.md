@@ -3,7 +3,9 @@
 <img src="./docs/icon_d.svg" width="200" alt="Project logo"/>
 </div>
 
+<div align="center">
 # Mine StableDiffusion 🐯
+</div>
 
 <p align="center">
   <a href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/></a>
@@ -24,7 +26,7 @@ _Only supports VulKun 1.1 or above_
 
 <img src="./docs/splash.jpg" alt="splash" width="800">
 
-</div>
+
 
 ## 💡 Description
 
