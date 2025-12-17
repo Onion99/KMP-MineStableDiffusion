@@ -22,7 +22,7 @@
 </p>
 
 **Kotlin Multiplatform Stable Diffusion**  
-_Only supports VulKun 1.1 or above_
+_Only supports VulKun 1.2 or above_
 
 <img src="./docs/splash.jpg" alt="splash" width="800">
 
