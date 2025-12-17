@@ -22,6 +22,11 @@ this project supports the following platforms:
 iOS support is not available yet. It will be added in the future.
 Note: the project is still in development and not all features are available on all platforms.
 
+## 🎲 TestModel
+
+*SDXL-Turbo*https://huggingface.co/stabilityai/sdxl-turbo/blob/main/sd_xl_turbo_1.0_fp16.safetensors
+
+
 
 ## ✨ Features
 
