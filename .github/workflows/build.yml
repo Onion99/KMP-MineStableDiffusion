@@ -153,7 +153,7 @@ jobs:
       - name: Build
         env:
           RELEASE_KEY_EXISTS: ${{ steps.sign.outputs.release_key_exists }}
-          RELEASE_KEY_STORE_PASSWORD: ${{ secrets.RELEASE_KEY_STORE_PASSWORD }}
+          RELEASE_KEY_STORE_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: ${{ matrix.task }}
 

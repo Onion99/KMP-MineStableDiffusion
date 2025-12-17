@@ -122,7 +122,7 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = libs.versions.app.version.get()
         ndk {
             abiFilters.clear()
             abiFilters += "arm64-v8a"
@@ -135,7 +135,7 @@ android {
             storePassword = getenv("RELEASE_KEY_STORE_PASSWORD")
             keyAlias = "nova"
             keyPassword = getenv("RELEASE_KEY_STORE_PASSWORD")
-            enableV1Signing = false
+            enableV1Signing = true
             enableV2Signing = true
             enableV3Signing = true
         }
@@ -147,8 +147,20 @@ android {
         }
     }
     buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
+        if (getenv("RELEASE_KEY_EXISTS") == "true") {
+            getByName("release") {
+                isShrinkResources = true
+                isMinifyEnabled = true
+                proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
+    android.applicationVariants.all {
+        outputs.all {
+            if (this is com.android.build.gradle.internal.api.ApkVariantOutputImpl) {
+                this.outputFileName = "TimeFlow-$versionName.apk"
+            }
         }
     }
     compileOptions {
