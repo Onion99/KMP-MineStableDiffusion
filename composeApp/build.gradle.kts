@@ -231,8 +231,8 @@ compose.desktop {
         }
 
         jvmArgs += listOf(
-            "-XX:+UseZGC",
-            "-XX:SoftMaxHeapSize=4096m",
+            //"-XX:+UseZGC",
+            "-XX:SoftMaxHeapSize=2048m",
             "--add-opens=java.desktop/java.awt.peer=ALL-UNNAMED",
             "--add-opens=java.desktop/sun.awt=ALL-UNNAMED"
         )
