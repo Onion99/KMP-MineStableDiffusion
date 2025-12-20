@@ -4,6 +4,10 @@
 
 本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## v1.3.0
+
+- jvmArgs change
+
 ## v1.2.0
 
 - adapt to android soft keyboard input
