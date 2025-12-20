@@ -5,6 +5,12 @@
 # 禁用优化是解决此问题的标准做法，且不会影响混淆(Obfuscation)和缩减(Shrinking)。
 -dontoptimize
 
+# 【核心修复】禁用预校验
+# ProGuard 的预校验步骤(Preverification)同样需要分析类层次结构以生成 StackMapTable。
+# 当存在大量缺失的 Android 类引用时，会导致 IncompleteClassHierarchyException。
+# 禁用预校验可跳过此步骤，且通常不会影响 JVM 运行（JVM 会在加载类时自行校验）。
+-dontpreverify
+
 # 移除会导致崩溃的激进优化选项
 # -mergeinterfacesaggressively
 # -overloadaggressively
