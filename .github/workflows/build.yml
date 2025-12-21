@@ -105,8 +105,13 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+        with:
+          build-root-directory: 'c' # [关键] 告诉 Gradle 根目录在 'p'
+
 
       - name: Build
+        working-directory: 'c' # [关键] 在 'p' 目录下执行命令
+
         run: ${{ matrix.task }}
 
       - name: Upload artifact
@@ -126,7 +131,7 @@ jobs:
           #            path: composeApp/build/archives/release/*.ipa
           - name: android
             task: ./gradlew assembleRelease
-            path: composeApp/build/outputs/apk/release/*.apk
+            path: c/composeApp/build/outputs/apk/release/*.apk
 
     runs-on: macos-latest
     name: Build ${{ matrix.name }}
