@@ -61,6 +61,8 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
+-dontnote okio.**
+-dontnote kotlinx.io.**
 
 # ================= KMP Common Suppressions =================
 # 1. Android classes

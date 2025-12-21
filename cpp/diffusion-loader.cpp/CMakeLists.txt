@@ -1,6 +1,3 @@
-# 设置最长路径,防止长路径在windows平台上报错
-set(CMAKE_OBJECT_PATH_MAX 260)
-set(CMAKE_OBJECT_NAME_MAX 260)
 # 设置 CMake 最低版本要求
 cmake_minimum_required(VERSION 3.22.1)
 # 定义项目名称
@@ -173,7 +170,7 @@ else()
     #  -flto: 启用链接时优化 (Link-Time Optimization)。这是一种强大的全局优化技术，链接器可以在所有代码都可见的情况下进行内联、常量传播等优化，能提升性能并减小体积。
     #  -Wl,--exclude-libs,ALL: 另一个体积优化选项，防止静态库中的所有符号都被添加到动态符号表中
     #target_link_options(sdloader PRIVATE "-Wl,--gc-sections" "-Wl,--exclude-libs,ALL")
-    target_link_options(sdloader PRIVATE -Wl,--gc-sections -flto -Wl,--exclude-libs,ALL)
+    target_link_options(sdloader PRIVATE -Wl,--gc-sections)
 endif()
 # C-指定头文件 (.h, .hpp) 的搜索路径。为JNI库添加 stable-diffusion 的头文件搜索路径
 # PUBLIC: 我自己需要这个路径，链接我的目标也需要这个路径。 (最常用)
