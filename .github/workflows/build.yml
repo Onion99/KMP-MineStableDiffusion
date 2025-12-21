@@ -88,6 +88,12 @@ jobs:
           distribution: ${{ startsWith(matrix.name, 'windows') && 'jetbrains' || 'zulu' }}
           java-version: 21
 
+      - name: Install Vulkan SDK
+        uses: humbletim/install-vulkan-sdk@v1.2
+        with:
+          version: 1.4.309.0
+          cache: true
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
