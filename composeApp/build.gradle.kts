@@ -238,6 +238,7 @@ compose.desktop {
         )
 
         buildTypes.release.proguard {
+            isEnabled = false
             version.set("7.7.0")
             configurationFiles.from("proguard-rules.pro")
         }
