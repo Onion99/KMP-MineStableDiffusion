@@ -241,9 +241,9 @@ jobs:
               done
             fi
             # Package portable as zip
-            if [ -d "windows-${arch}/app/KMP-MineStableDiffusion" ]; then
+            if [ -d "windows-${arch}/app/MineStableDiffusion" ]; then
               cd windows-${arch}/app
-              zip -r "../../${BASE_NAME}-windows-${arch}.zip" KMP-MineStableDiffusion
+              zip -r "../../${BASE_NAME}-windows-${arch}.zip" MineStableDiffusion
               cd ../..
             fi
           done
