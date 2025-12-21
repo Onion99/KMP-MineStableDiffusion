@@ -358,7 +358,7 @@ tasks.register("buildNativeLibsIfNeeded") {
                     name.endsWith(".dll") || name.endsWith(".dll.a")
                             || name.endsWith(".so") || name.endsWith(".dylib")
                 }?.forEach { f ->
-                    val target = java.io.File(destDir, f.name)
+                    val target = File(destDir, f.name)
                     // Simple file copy
                     f.copyTo(target, overwrite = true)
                 }
