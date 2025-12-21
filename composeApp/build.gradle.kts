@@ -216,6 +216,8 @@ compose.desktop {
                 iconFile.set(rootProject.file("docs/AppIcon.ico"))
                 dirChooser = true
                 perUserInstall = true
+                shortcut = true
+                menu = true
             }
             macOS {
                 iconFile.set(rootProject.file("docs/AppIcon.icns"))
