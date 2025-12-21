@@ -347,10 +347,21 @@ tasks.register("buildNativeLibsIfNeeded") {
         // 如果我们没有运行构建任务（因为 libFile 存在），我们仍需确保它被复制到 jvmResourceLibDir
         if (libFile.exists() && !jvmLibFile.exists()) {
             println("原生库还没有迁移JVM资源目录,现在迁移")
-            copy {
-                from(cppLibsDirVal)
-                include("*.dll","*.dll.a", "*.so", "*.dylib")
-                into(jvmResourceLibDirVal)
+            // Manually copy to avoid capturing 'project' in doLast which breaks configuration cache
+            val srcDir = File(cppLibsDirVal)
+            val destDir = File(jvmResourceLibDirVal)
+            
+            if (!destDir.exists()) destDir.mkdirs()
+
+            if (srcDir.exists() && srcDir.isDirectory) {
+                srcDir.listFiles { _, name -> 
+                    name.endsWith(".dll") || name.endsWith(".dll.a")
+                            || name.endsWith(".so") || name.endsWith(".dylib")
+                }?.forEach { f ->
+                    val target = java.io.File(destDir, f.name)
+                    // Simple file copy
+                    f.copyTo(target, overwrite = true)
+                }
             }
         }
     }
