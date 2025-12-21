@@ -12,9 +12,9 @@
 -dontpreverify
 
 # 移除会导致崩溃的激进优化选项
- -mergeinterfacesaggressively
- -overloadaggressively
- -repackageclasses
+# -mergeinterfacesaggressively
+# -overloadaggressively
+# -repackageclasses
 # -allowaccessmodification
 
 # ================= Critical: Ignore Warnings for KMP =================
