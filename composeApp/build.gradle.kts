@@ -90,9 +90,6 @@ kotlin {
             }
         }
         desktopMain.dependsOn(jvmMain)
-        // KMP 的 dependsOn 只处理源码依赖，不会合并资源目录
-        // 需要显式将 jvmMain/resources 添加到 desktopMain 的资源目录中
-        desktopMain.resources.srcDir("src/jvmMain/resources")
     }
 }
 
@@ -427,5 +424,11 @@ tasks.register("buildNativeLibsIfNeeded") {
 
 tasks.matching { it.name.contains("packageReleaseDmg")
         || it.name.contains("createReleaseDistributable") }.configureEach {
+    dependsOn("buildNativeLibsIfNeeded")
+}
+
+// 关键修复：确保 DLL 在资源处理之前就已复制到位
+// desktopProcessResources 必须在 buildNativeLibsIfNeeded 之后运行
+tasks.matching { it.name.contains("desktopProcessResources") }.configureEach {
     dependsOn("buildNativeLibsIfNeeded")
 }
