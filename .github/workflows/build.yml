@@ -9,7 +9,7 @@ on:
       - 'master'
     # 且修改了应用或文档相关文件
     paths:
-      #- 'composeApp/**'         # Kotlin Multiplatform 核心代码
+      - 'composeApp/**'         # Kotlin Multiplatform 核心代码
       - 'gradle/**'             # Gradle wrapper
       - 'build.gradle.kts'
       - 'settings.gradle.kts'

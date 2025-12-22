@@ -392,13 +392,38 @@ tasks.register("buildNativeLibsIfNeeded") {
     } else {
          println("原生库已存在 (配置阶段检查)")
     }
+    // 捕获需要的路径字符串，供 doLast 使用
+    val cppLibsDirStr = cppLibsDirVal
+    val jvmResourceLibDirStr = jvmResourceLibDirVal
+    doLast {
+        // 这里只能使用局部变量 cppLibsDirStr, jvmResourceLibDirStr
+        // 绝对不能用 project.file 或 rootDirVal,也就是全局变量,也不能使用全局方法
+        val srcDir = File(cppLibsDirStr)
+        val destDir = File(jvmResourceLibDirStr)
+        // 迁移到JVM资源目录
+        if (!destDir.exists()) destDir.mkdirs()
+        if (srcDir.exists() && srcDir.isDirectory) {
+            srcDir.listFiles { _, name ->
+                name.endsWith(".dll") || name.endsWith(".dll.a")
+                        || name.endsWith(".so") || name.endsWith(".dylib")
+            }?.forEach { f ->
+                f.copyTo(File(destDir, f.name), overwrite = true)
+            }
+        }
+    }
+}
+
+// 确保在处理资源之前准备好 Native 库
+// 尝试 hook 所有相关的 processResources 任务
+tasks.matching { it.name.contains("processDesktopMainResources") }.configureEach {
+    dependsOn("buildNativeLibsIfNeeded")
 }
 
 // 让desktopRun依赖这个CMake构建任务,来执行桌面JVM平台构建
-tasks.matching { it.name.contains("desktopRun") }.configureEach {
-    dependsOn("buildNativeLibsIfNeeded")
-}
-tasks.matching { it.name.contains("packageReleaseDmg")
-        || it.name.contains("createReleaseDistributable") }.configureEach {
-    dependsOn("buildNativeLibsIfNeeded")
-}
+//tasks.matching { it.name.contains("desktopRun") }.configureEach {
+//    dependsOn("buildNativeLibsIfNeeded")
+//}
+//tasks.matching { it.name.contains("packageReleaseDmg")
+//        || it.name.contains("createReleaseDistributable") }.configureEach {
+//    dependsOn("buildNativeLibsIfNeeded")
+//}
