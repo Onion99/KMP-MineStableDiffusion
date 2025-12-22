@@ -354,6 +354,7 @@ desktopPlatforms.forEach { platform ->
                             name.endsWith(".so") || name.endsWith(".dylib")
                 }?.forEach { f ->
                     f.copyTo(File(destDir, f.name), overwrite = true)
+                    println("第一次SO迁移到JVM资源目录")
                 }
             }
         }
@@ -409,21 +410,13 @@ tasks.register("buildNativeLibsIfNeeded") {
             }?.forEach { f ->
                 f.copyTo(File(destDir, f.name), overwrite = true)
             }
+            println("第二次SO迁移到JVM资源目录")
         }
     }
 }
 
-// 确保在处理资源之前准备好 Native 库
-// 尝试 hook 所有相关的 processResources 任务
-tasks.matching { it.name.contains("processDesktopMainResources") }.configureEach {
+
+tasks.matching { it.name.contains("packageReleaseDmg")
+        || it.name.contains("createReleaseDistributable") }.configureEach {
     dependsOn("buildNativeLibsIfNeeded")
 }
-
-// 让desktopRun依赖这个CMake构建任务,来执行桌面JVM平台构建
-//tasks.matching { it.name.contains("desktopRun") }.configureEach {
-//    dependsOn("buildNativeLibsIfNeeded")
-//}
-//tasks.matching { it.name.contains("packageReleaseDmg")
-//        || it.name.contains("createReleaseDistributable") }.configureEach {
-//    dependsOn("buildNativeLibsIfNeeded")
-//}
