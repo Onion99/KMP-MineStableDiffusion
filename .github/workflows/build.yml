@@ -105,15 +105,19 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
+      - name: Setup MSBuild (Windows)
+        if: startsWith(matrix.name, 'windows')
+        uses: microsoft/setup-msbuild@v2
+
       - name: Build
         if: "!startsWith(matrix.name, 'windows')"
         run: ${{ matrix.task }}
 
       - name: Build (Windows)
         if: startsWith(matrix.name, 'windows')
-        shell: cmd
         run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          subst V: (Get-Location).Path
+          Set-Location V:
           ${{ matrix.task }}
 
       - name: Upload artifact
