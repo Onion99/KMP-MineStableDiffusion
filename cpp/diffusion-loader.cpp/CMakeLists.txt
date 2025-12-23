@@ -157,6 +157,10 @@ if(WIN32)
         set(CMAKE_GENERATOR_PLATFORM x64 CACHE STRING "Platform" FORCE)
     endif()
     
+    # 静态链接 MSVC 运行时库,消除 msvcp140.dll 依赖,避免运行时崩溃
+    # /MT (Release) 或 /MTd (Debug) - 将运行时库嵌入 DLL
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    
     # 验证架构配置
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         message(STATUS "Windows: 配置为 64-bit 构建")
