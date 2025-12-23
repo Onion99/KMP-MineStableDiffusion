@@ -413,7 +413,8 @@ tasks.register("buildNativeLibsIfNeeded") {
     doLast {
         // 这里只能使用局部变量 cppLibsDirStr, jvmResourceLibDirStr
         // 绝对不能用 project.file 或 rootDirVal,也就是全局变量,也不能使用全局方法
-        val srcDir = File(cppLibsDirStr)
+        if(libFile.exists()) return@doLast
+        val srcDir = File(cppLibsDirStr+File.separator+"Release")
         val destDir = File(jvmResourceLibDirStr)
         // 迁移到JVM资源目录
         if (!destDir.exists()) destDir.mkdirs()
@@ -424,7 +425,7 @@ tasks.register("buildNativeLibsIfNeeded") {
             }?.forEach { f ->
                 f.copyTo(File(destDir, f.name), overwrite = true)
             }
-            println("第二次SO迁移到JVM资源目录")
+            println("兜底第二次SO迁移到JVM资源目录")
             println("cppLibsDirVal:$cppLibsDirStr")
             println("jvmResourceLibDirStr:$jvmResourceLibDirStr")
             println("${destDir.listFiles().map { it.name }}")
