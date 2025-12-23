@@ -102,21 +102,6 @@ jobs:
           version: 1.4.309.0
           cache: true
 
-      # Windows 需要安装 MinGW-w64 工具链来编译 64 位原生库
-      - name: Setup MinGW-w64
-        if: startsWith(matrix.name, 'windows')
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          update: false
-          install: mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-
-      - name: Add MinGW to PATH
-        if: startsWith(matrix.name, 'windows')
-        run: |
-          echo "C:\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        shell: powershell
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
@@ -126,18 +111,7 @@ jobs:
 
       - name: Build (Windows)
         if: startsWith(matrix.name, 'windows')
-        env:
-          # 自定义环境变量，由 build.gradle.kts 读取并传递给 CMake
-          MINGW_CC: C:/msys64/mingw64/bin/gcc.exe
-          MINGW_CXX: C:/msys64/mingw64/bin/g++.exe
         run: |
-          # 验证编译器版本（应显示 x86_64）
-          Write-Host "=== Compiler Verification ==="
-          Write-Host "GCC path: $(Get-Command gcc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source)"
-          gcc --version
-          Write-Host "MINGW_CC: $env:MINGW_CC"
-          Write-Host "MINGW_CXX: $env:MINGW_CXX"
-          # 解决 Windows 长路径问题
           subst V: (Get-Location).Path
           Set-Location V:
           ${{ matrix.task }}

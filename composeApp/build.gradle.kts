@@ -317,13 +317,6 @@ desktopPlatforms.forEach { platform ->
             )*/
             "macos" -> listOf("-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64")
             else -> listOf()
-        }.toMutableList()
-        
-        // 如果设置了 MINGW_CC/MINGW_CXX 环境变量（CI 环境），则使用指定的编译器
-        // 本地构建不设置这些变量，所以不受影响
-        if (platform == "windows") {
-            System.getenv("MINGW_CC")?.let { options.add("-DCMAKE_C_COMPILER=$it") }
-            System.getenv("MINGW_CXX")?.let { options.add("-DCMAKE_CXX_COMPILER=$it") }
         }
         // window 平台显式指定编译器 (如果它们不在 PATH 中，或者你想确保使用特定的编译器)
         // cmakeOptions.add("-DCMAKE_C_COMPILER=D:/MyApp/Code/mingw64/bin/x86_64-w64-mingw32-gcc.exe")
