@@ -423,7 +423,7 @@ tasks.register("buildNativeLibsIfNeeded") {
                 name.endsWith(".dll") || name.endsWith(".dll.a")
                         || name.endsWith(".so") || name.endsWith(".dylib")
             }?.forEach { f ->
-                f.copyTo(File(destDir, f.name), overwrite = true)
+                f.copyTo(File(destDir, if(f.name.startsWith("lib")) f.name else "lib${f.name}"), overwrite = true)
             }
             println("兜底第二次SO迁移到JVM资源目录")
             println("cppLibsDirVal:$cppLibsDirStr")
