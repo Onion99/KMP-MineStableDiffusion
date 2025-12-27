@@ -4,6 +4,11 @@
 
 本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## v1.3.1
+
+- fix dylib copy in MacOS
+
+
 ## v1.3.0
 
 - jvmArgs change
