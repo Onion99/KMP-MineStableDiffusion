@@ -309,7 +309,7 @@ desktopPlatforms.forEach { platform ->
                     "Visual Studio 17 2022"
                 }
             }
-            //"macos" -> "Xcode"
+            "macos" -> "Xcode"
             "linux" -> "Unix Makefiles"
             else -> "Unix Makefiles"
         }
