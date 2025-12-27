@@ -67,6 +67,15 @@ Note: the project is still in development and not all features are available on 
     - [Qwen Image](./docs/qwen_image.md)
 - waiting...
 
+## Technologies
+
+* [ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp) is a pure C/C++ framework to execute machine learning
+  models on multiple execution backends. It provides a primitive C-style API to interact with LLMs
+  converted to the [GGUF format](https://github.com/ggerganov/ggml/blob/master/docs/gguf.md) native to [ggml](https://github.com/ggerganov/ggml)/llama.cpp. The app uses JNI bindings to interact with a small class `smollm.
+  cpp` which uses llama.cpp to load and execute GGUF models.
+
+* [leejet/stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) Diffusion model(SD,Flux,Wan,...) inference in pure C/C++
+
 ## 💙 Find this repository useful?
 Support it by staring and sharing it :star:
 
