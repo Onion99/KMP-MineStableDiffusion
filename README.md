@@ -23,7 +23,7 @@
 
 **Kotlin Multiplatform Stable Diffusion**  
 _Only supports VulKun 1.2 or above_
-_MacOs build with Metal_
+_/MacOs build with Metal_
 
 <img src="./docs/figma.webp" alt="splash" width="800">
 
