@@ -7,7 +7,6 @@
 _Generate stunning AI art locally on Android & Desktop_
 
 <p align="center">
-  <a href="https://opensource.org/licenses/Apache-3.0"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/></a>
   <a href="https://kotlinlang.org"><img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF.svg"/></a>
   <a href="#"><img alt="Platforms" src="https://img.shields.io/badge/Platforms-Android%20%7C%20Desktop-brightgreen"/></a>
   <a href="https://github.com/Onion99/KMP-MineStableDiffusion/releases">
