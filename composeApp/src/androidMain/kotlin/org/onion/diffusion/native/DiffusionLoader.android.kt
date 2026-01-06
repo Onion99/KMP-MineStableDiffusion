@@ -60,4 +60,5 @@ actual class DiffusionLoader actual constructor() {
         seed: Long
     ): ByteArray?
     private external fun nativeRelease(handle: Long)
+
 }

@@ -8,23 +8,22 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -34,9 +33,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.InsertDriveFile
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AttachFile
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
@@ -147,7 +149,7 @@ fun HomeScreen(
         val keyboardController = LocalSoftwareKeyboardController.current
         val focusManager = LocalFocusManager.current
         val snackbarHostState = remember { SnackbarHostState() }
-        var showFileDialog by remember { mutableStateOf(chatViewModel.modelPath.isEmpty()) }
+        var showFileDialog by remember { mutableStateOf(chatViewModel.diffusionModelPath.value.isEmpty()) }
         val coroutineScope = rememberCoroutineScope()
         coroutineScope.launch {
             chatViewModel.loadingModelState.collect { state ->
@@ -159,11 +161,10 @@ fun HomeScreen(
             selectAction = {
                 coroutineScope.launch(Dispatchers.Default) {
                     if(chatViewModel.loadingModelState.value == 1) return@launch
-                    val file = chatViewModel.selectLLMModelFile()
-                    if(file.isBlank()){
-                        chatViewModel.loadingModelState.emit(0)
+                    if(chatViewModel.diffusionModelPath.value.isBlank()){
                         snackbarHostState.showSnackbar(getString(Res.string.error_select_correct_llm_model))
                     }else {
+                        chatViewModel.loadingModelState.emit(1)
                         chatViewModel.initLLM()
                     }
                 }
@@ -686,23 +687,32 @@ fun LLMFileSelectTipDialog(
         // koinInject唯一的“副作用”是 onCleared() 永远不会被调用
         val chatViewModel = koinInject<ChatViewModel>()
         val loadingState by chatViewModel.loadingModelState.collectAsState(0)
+        val vaePath by chatViewModel.vaePath
+        val llmPath by chatViewModel.llmPath
+        val diffusionPath by chatViewModel.diffusionModelPath
+        val coroutineScope = rememberCoroutineScope()
+        
         Dialog(
             onDismissRequest = {},
-            properties = DialogProperties(dismissOnClickOutside = true)
+            properties = DialogProperties(dismissOnClickOutside = false)
         ) {
             Card(
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White) // Use white background
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(24.dp)
                         .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    // Lottie Animation
                     val composition by rememberLottieComposition {
                         LottieCompositionSpec.DotLottie(
                             Res.readBytes("files/anim_ai_file_.lottie")
@@ -715,43 +725,110 @@ fun LLMFileSelectTipDialog(
                         ),
                         contentDescription = "File animation",
                         modifier = Modifier
-                            .size(166.dp)
-                            .padding(bottom = 16.dp)
+                            .size(120.dp)
+                            .padding(bottom = 8.dp)
                     )
 
                     // Title
                     MediumText(
                         text = stringResource(Res.string.select_llm_model_title),
-                        fontSize = 24.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF00BCD4), // Adjust color to match your design
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 16.dp)
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
 
-                    // OK Button with Gradient
+                    // File Selection Cards
+                    FileSelectionCard(
+                        title = "Diffusion Model",
+                        subtitle = "Required",
+                        selectedPath = diffusionPath,
+                        isRequired = true,
+                        gradientColors = listOf(
+                            Color(0xFFFFA726),
+                            Color(0xFF81C784)
+                        ),
+                        onSelectClick = {
+                            coroutineScope.launch(Dispatchers.Default) {
+                                if(loadingState == 1) return@launch
+                                chatViewModel.selectDiffusionModelFile()
+                            }
+                        }
+                    )
+
+                    FileSelectionCard(
+                        title = "VAE Model",
+                        subtitle = "Optional",
+                        selectedPath = vaePath,
+                        isRequired = false,
+                        gradientColors = listOf(
+                            Color(0xFF9C27B0),
+                            Color(0xFF2196F3)
+                        ),
+                        onSelectClick = {
+                            coroutineScope.launch(Dispatchers.Default) {
+                                if(loadingState == 1) return@launch
+                                chatViewModel.selectVaeFile()
+                            }
+                        }
+                    )
+
+                    FileSelectionCard(
+                        title = "LLM Model",
+                        subtitle = "Optional",
+                        selectedPath = llmPath,
+                        isRequired = false,
+                        gradientColors = listOf(
+                            Color(0xFF00BCD4),
+                            Color(0xFF00E5FF)
+                        ),
+                        onSelectClick = {
+                            coroutineScope.launch(Dispatchers.Default) {
+                                if(loadingState == 1) return@launch
+                                chatViewModel.selectLlmFile()
+                            }
+                        }
+                    )
+
+                    // Confirm Button
                     Button(
                         onClick = selectAction,
+                        enabled = diffusionPath.isNotEmpty() && loadingState != 1,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(40.dp,0.dp)
-                            .height(50.dp)
-                            .clip(RoundedCornerShape(25.dp)) // Rounded corners for the button
+                            .padding(horizontal = 20.dp)
+                            .height(52.dp)
+                            .clip(RoundedCornerShape(26.dp))
                             .background(
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(
-                                        Color(0xFFFFA726),
-                                        Color(0xFF81C784)
-                                    ) // Adjust gradient colors
-                                )
+                                brush = if (diffusionPath.isNotEmpty() && loadingState != 1) {
+                                    Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color(0xFFFFA726),
+                                            Color(0xFF81C784)
+                                        )
+                                    )
+                                } else {
+                                    Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color.Gray.copy(alpha = 0.3f),
+                                            Color.Gray.copy(alpha = 0.3f)
+                                        )
+                                    )
+                                }
                             ),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent) // Make button background transparent
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent
+                        )
                     ) {
                         MediumText(
-                            text = if(loadingState == 1) stringResource(Res.string.loading)  else 	stringResource(Res.string.select),
+                            text = if(loadingState == 1) stringResource(Res.string.loading) 
+                                   else stringResource(Res.string.select),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = if (diffusionPath.isNotEmpty() && loadingState != 1) 
+                                Color.White else Color.White.copy(alpha = 0.5f)
                         )
                     }
                 }
@@ -759,6 +836,146 @@ fun LLMFileSelectTipDialog(
         }
     }
 }
+
+@Composable
+private fun FileSelectionCard(
+    title: String,
+    subtitle: String,
+    selectedPath: String,
+    isRequired: Boolean,
+    gradientColors: List<Color>,
+    onSelectClick: () -> Unit
+) {
+    val isSelected = selectedPath.isNotEmpty()
+    
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(90.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        ),
+        border = if (isSelected) {
+            BorderStroke(
+                width = 2.dp,
+                brush = Brush.horizontalGradient(gradientColors)
+            )
+        } else null
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Left side: Icon and Info
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Icon with gradient background
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .background(
+                            brush = Brush.linearGradient(gradientColors),
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (isSelected) Icons.Filled.CheckCircle 
+                                      else Icons.Filled.InsertDriveFile,
+                        contentDescription = title,
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                
+                // Title and path
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        MediumText(
+                            text = title,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        
+                        // Badge
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = if (isRequired) 
+                                        MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                                    else 
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = subtitle,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = if (isRequired) 
+                                    MaterialTheme.colorScheme.error
+                                else 
+                                    MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                    
+                    // File path or placeholder
+                    MediumText(
+                        text = if (isSelected) {
+                            selectedPath.split("/", "\\").lastOrNull() ?: selectedPath
+                        } else {
+                            "No file selected"
+                        },
+                        fontSize = 12.sp,
+                        color = if (isSelected) 
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        else 
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
+                }
+            }
+            
+            // Select button
+            Button(
+                onClick = onSelectClick,
+                modifier = Modifier
+                    .height(36.dp)
+                    .widthIn(min = 70.dp),
+                shape = RoundedCornerShape(18.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+            ) {
+                MediumText(
+                    text = if (isSelected) "Change" else "Select",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun MagicLoadingAnimation() {

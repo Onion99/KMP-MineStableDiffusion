@@ -19,7 +19,9 @@ import kotlin.time.measureTime
 class ChatViewModel  : ViewModel() {
 
     private var diffusionLoader:DiffusionLoader = DiffusionLoader()
-    var modelPath = ""
+    var diffusionModelPath = mutableStateOf("")
+    var vaePath = mutableStateOf("")
+    var llmPath = mutableStateOf("")
     private var initModel = false
     // 0 default,1 loading,2 loading completely
     var loadingModelState = MutableStateFlow(0)
@@ -39,10 +41,22 @@ class ChatViewModel  : ViewModel() {
     /** CFG Scale - range: 1.0-15.0 */
     var cfgScale = mutableStateOf(2f)
 
-    suspend fun selectLLMModelFile(): String{
-        loadingModelState.emit(1)
-        modelPath = diffusionLoader.getModelFilePath()
-        return modelPath
+    suspend fun selectDiffusionModelFile(): String{
+        val diffusionModelPath = diffusionLoader.getModelFilePath()
+        this.diffusionModelPath.value = diffusionModelPath
+        return diffusionModelPath
+    }
+
+    suspend fun selectVaeFile(): String{
+        val path = diffusionLoader.getModelFilePath()
+        vaePath.value = path
+        return path
+    }
+
+    suspend fun selectLlmFile(): String{
+        val path = diffusionLoader.getModelFilePath()
+        llmPath.value = path
+        return path
     }
 
     fun initLLM(){
@@ -51,7 +65,7 @@ class ChatViewModel  : ViewModel() {
         viewModelScope.launch(Dispatchers.Default) {
             loadingModelState.emit(1)
             // ---- read chatTemplate and contextSize ------
-            diffusionLoader.loadModel(modelPath)
+            diffusionLoader.loadModel(diffusionModelPath.value)
             loadingModelState.emit(2)
         }
     }
