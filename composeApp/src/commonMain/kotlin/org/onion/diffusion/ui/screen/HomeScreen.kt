@@ -730,14 +730,14 @@ fun LLMFileSelectTipDialog(
                     )
 
                     // Title
-                    MediumText(
+                    /*MediumText(
                         text = stringResource(Res.string.select_llm_model_title),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                    )*/
 
                     // File Selection Cards
                     FileSelectionCard(
