@@ -183,9 +183,7 @@ cd KMP-MineStableDiffusion
 
 ## 📚 Documentation
 
-- 📖 [Model Guide](./docs) - Supported models and setup instructions
-- 🛠️ [Architecture Overview](./docs/architecture.md) - Technical architecture details
-- 🤝 [Contributing Guide](./CONTRIBUTING.md) - How to contribute
+
 - 📝 [Changelog](./CHANGELOG.md) - Version history
 
 ---
