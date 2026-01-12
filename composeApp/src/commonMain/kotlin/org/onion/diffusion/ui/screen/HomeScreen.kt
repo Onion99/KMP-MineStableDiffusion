@@ -54,10 +54,11 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import com.onion.theme.state.ContentType
+import ui.theme.AppTheme
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -86,6 +87,7 @@ import coil3.compose.AsyncImage
 import com.onion.model.ChatMessage
 import com.onion.theme.style.MediumOutlinedTextField
 import com.onion.theme.style.MediumText
+import com.onion.theme.style.Text
 import io.github.alexzhirkevich.compottie.Compottie
 import io.github.alexzhirkevich.compottie.DotLottie
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
@@ -855,11 +857,12 @@ private fun FileSelectionCard(
     onSelectClick: () -> Unit
 ) {
     val isSelected = selectedPath.isNotEmpty()
+    val contentType = AppTheme.contentType
     
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(90.dp),
+            .height(110.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
@@ -908,38 +911,75 @@ private fun FileSelectionCard(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        MediumText(
-                            text = title,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        
-                        // Badge
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = if (isRequired) 
-                                        MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
-                                    else 
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                    if (contentType == ContentType.Single) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                            horizontalAlignment = Alignment.Start
                         ) {
-                            Text(
-                                text = subtitle,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = if (isRequired) 
-                                    MaterialTheme.colorScheme.error
-                                else 
-                                    MaterialTheme.colorScheme.primary
+                             MediumText(
+                                text = title,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
+                            
+                            // Badge
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = if (isRequired) 
+                                            MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                                        else 
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Text(
+                                    text = subtitle,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = if (isRequired) 
+                                        MaterialTheme.colorScheme.error
+                                    else 
+                                        MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            MediumText(
+                                text = title,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            
+                            // Badge
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = if (isRequired) 
+                                            MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                                        else 
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Text(
+                                    text = subtitle,
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = if (isRequired) 
+                                        MaterialTheme.colorScheme.error
+                                    else 
+                                        MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                     
@@ -1108,9 +1148,8 @@ private fun MagicLoadingAnimation() {
             horizontalArrangement = Arrangement.spacedBy(2.dp),
             verticalAlignment = Alignment.Bottom
         ) {
-            Text(
+            MediumText(
                 text = stringResource(Res.string.creating),
-                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 fontWeight = FontWeight.Normal
             )
@@ -1130,9 +1169,8 @@ private fun MagicLoadingAnimation() {
                     )
                 )
 
-                Text(
+                MediumText(
                     text = "·",
-                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = dotAlpha),
                     modifier = Modifier.padding(start = 1.dp)
                 )
