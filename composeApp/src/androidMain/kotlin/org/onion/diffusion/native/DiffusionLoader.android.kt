@@ -22,6 +22,8 @@ actual class DiffusionLoader actual constructor() {
         val androidFile = FileKit.openFilePicker(type = FileKitType.File(listOf(
             "safetensors","ckpt","pt","bin","gguf"
         )))
+        val file = File(FileKit.context.filesDir, androidFile!!.name)
+        if(file.exists()) return file.absolutePath
         FileKit.context.contentResolver.openInputStream((androidFile?.absolutePath() ?: return "").toUri()).use { inputStream ->
             FileOutputStream(File(FileKit.context.filesDir, androidFile.name)).use { outputStream ->
                 inputStream?.copyTo(outputStream)
@@ -33,7 +35,8 @@ actual class DiffusionLoader actual constructor() {
     actual fun loadModel(
         modelPath: String,
         vaePath: String,
-        llmPath: String
+        llmPath: String,
+        useFlashAttn: Boolean
     ) {
         nativePtr = nativeLoadModel(
             modelPath,
@@ -41,7 +44,8 @@ actual class DiffusionLoader actual constructor() {
             llmPath,
             false,
             false,
-            false
+            false,
+            useFlashAttn
         )
     }
 
@@ -66,7 +70,8 @@ actual class DiffusionLoader actual constructor() {
         llmPath: String,
         offloadToCpu: Boolean,
         keepClipOnCpu: Boolean,
-        keepVaeOnCpu: Boolean
+        keepVaeOnCpu: Boolean,
+        useFlashAttn: Boolean
     ): Long
 
     private external fun nativeTxt2Img(
