@@ -62,18 +62,18 @@ Mine StableDiffusion is a **native, offline-first AI art generation app** that b
 Mine StableDiffusion supports a wide range of state-of-the-art generative models:
 
 ### 🔥 Popular Models
-- ✅ **FLUX.1-dev / FLUX.1-schnell** - Next-gen image generation
-- ✅ **FLUX.2-dev** - Latest FLUX iteration
-- ✅ **SDXL / SDXL-Turbo** - High-quality 1024x1024 images
-- ✅ **SD3 / SD3.5** - Stability AI's latest architecture
+- ✅ **[FLUX.1-dev / FLUX.1-schnell](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/flux.md)** - Next-gen image generation
+- ✅ **[FLUX.2-dev](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/flux.md)** - Latest FLUX iteration
+- ✅ **[SDXL / SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo)** - High-quality 1024x1024 images
+- ✅ **[SD3 / SD3.5](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/sd3.md)** - Stability AI's latest architecture
 - ✅ **SD1.x / SD2.x** - Classic Stable Diffusion models
-- ✅ **SD-Turbo** - Lightning-fast generation
+- ✅ **[SD-Turbo](https://huggingface.co/stabilityai/sd-turbo)** - Lightning-fast generation
 
 ### 🌈 Specialized Models
-- 🎨 **Chroma / Chroma1-Radiance** - Vibrant color generation
-- 🖼️ **Z-Image** - Advanced image synthesis
-- 🧠 **Qwen Image** - Alibaba's multimodal model
-- 👁️ **Ovis-Image** - Vision-language model
+- 🎨 **[Chroma](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/chroma.md) / [Chroma1-Radiance](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/chroma_radiance.md)** - Vibrant color generation
+- 🖼️ **[Z-Image](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/z_image.md)** - Advanced image synthesis
+- 🧠 **[Qwen Image](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/qwen_image.md)** - Alibaba's multimodal model
+- 👁️ **[Ovis-Image](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/ovis_image.md)** - Vision-language model
 
 > [!TIP]
 > For model-specific documentation, check the [docs](./docs) folder
