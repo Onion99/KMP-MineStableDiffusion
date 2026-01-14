@@ -18,7 +18,7 @@ import kotlin.time.measureTime
 
 class ChatViewModel  : ViewModel() {
 
-    private var diffusionLoader:DiffusionLoader = DiffusionLoader()
+    var diffusionLoader:DiffusionLoader = DiffusionLoader()
     var diffusionModelPath = mutableStateOf("")
     var vaePath = mutableStateOf("")
     var llmPath = mutableStateOf("")

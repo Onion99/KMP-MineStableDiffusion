@@ -12,5 +12,8 @@ expect class DiffusionLoader(){
         width: Int, height: Int,
         steps: Int, cfg: Float, seed: Long,
     ): ByteArray?
+
     fun release()
+
+    suspend fun saveImage(imageData: ByteArray, fileName: String): Boolean
 }

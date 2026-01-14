@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.InsertDriveFile
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SaveAlt
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -115,6 +116,10 @@ import minediffusion.composeapp.generated.resources.send_message
 import minediffusion.composeapp.generated.resources.stop_generation
 import minediffusion.composeapp.generated.resources.user_avatar
 import minediffusion.composeapp.generated.resources.user_image
+import minediffusion.composeapp.generated.resources.save_image
+import minediffusion.composeapp.generated.resources.image_saved
+import minediffusion.composeapp.generated.resources.image_save_failed
+import org.onion.diffusion.native.DiffusionLoader
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
@@ -127,6 +132,8 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 
 fun NavGraphBuilder.homeScreen(onSettingsClick: () -> Unit = {}){
@@ -292,10 +299,13 @@ private fun SettingsEntryButton(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun ChatMessagesList(chatMessages: List<ChatMessage>) {
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val chatViewModel = koinInject<ChatViewModel>()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Track scroll position to show/hide button
     val showScrollButton by remember {
@@ -331,7 +341,15 @@ private fun ChatMessagesList(chatMessages: List<ChatMessage>) {
                     ChatBubble(
                         message = message.message,
                         image = message.image,
-                        isUser = message.isUser
+                        isUser = message.isUser,
+                        onSaveImage = { imageData ->
+                            coroutineScope.launch(Dispatchers.Default) {
+                                val fileName = "diffusion_${Clock.System.now().toEpochMilliseconds()}.png"
+                                val success = chatViewModel.diffusionLoader.saveImage(imageData, fileName)
+                                val msg = if (success) getString(Res.string.image_saved) else getString(Res.string.image_save_failed)
+                                snackbarHostState.showSnackbar(msg)
+                            }
+                        }
                     )
                 }
             }
@@ -523,7 +541,8 @@ fun SendStopButton(
 fun ChatBubble(
     message: String,
     image: ByteArray? = null,
-    isUser: Boolean
+    isUser: Boolean,
+    onSaveImage: ((ByteArray) -> Unit)? = null
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -552,7 +571,8 @@ fun ChatBubble(
             ChatBubbleMessage(
                 message = message,
                 image = image,
-                isUser = isUser
+                isUser = isUser,
+                onSaveImage = onSaveImage
             )
         }
     }
@@ -609,12 +629,13 @@ private fun AiProviderIcon() {
 private fun ChatBubbleMessage(
     message: String,
     image: ByteArray? = null,
-    isUser: Boolean
+    isUser: Boolean,
+    onSaveImage: ((ByteArray) -> Unit)? = null
 ) {
     if (isUser) {
         UserMessage(message = message, image = image)
     } else {
-        AiMessage(message = message, image = image)
+        AiMessage(message = message, image = image, onSaveImage = onSaveImage)
     }
 }
 
@@ -647,7 +668,8 @@ private fun UserMessage(message: String, image: ByteArray? = null) {
 @Composable
 private fun AiMessage(
     message: String,
-    image: ByteArray? = null
+    image: ByteArray? = null,
+    onSaveImage: ((ByteArray) -> Unit)? = null
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         // 当消息为空且无图片时，显示创意加载动画
@@ -656,16 +678,37 @@ private fun AiMessage(
         } else {
             // 正常显示逻辑
             if (image != null) {
-                AsyncImage(
-                    model = image,
-                    contentDescription = stringResource(Res.string.ai_image),
-                    alignment = Alignment.Center,
-                    contentScale = ContentScale.Inside,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .wrapContentSize()
-                        .padding(bottom = 4.dp)
-                )
+                Box(modifier = Modifier.wrapContentSize()) {
+                    AsyncImage(
+                        model = image,
+                        contentDescription = stringResource(Res.string.ai_image),
+                        alignment = Alignment.Center,
+                        contentScale = ContentScale.Inside,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .wrapContentSize()
+                            .padding(bottom = 4.dp)
+                    )
+                    // Save button overlay
+                    IconButton(
+                        onClick = { onSaveImage?.invoke(image) },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .size(36.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                                shape = CircleShape
+                            )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.SaveAlt,
+                            contentDescription = stringResource(Res.string.save_image),
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
             }
             if (message.isNotEmpty()) {
                 MediumText(

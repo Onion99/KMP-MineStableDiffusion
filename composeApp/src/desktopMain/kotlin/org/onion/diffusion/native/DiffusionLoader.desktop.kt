@@ -2,6 +2,7 @@ package org.onion.diffusion.native
 
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.openFilePicker
+import io.github.vinceglb.filekit.saveImageToGallery
 import org.onion.diffusion.utils.NativeLibraryLoader
 
 actual class DiffusionLoader actual constructor() {
@@ -44,6 +45,16 @@ actual class DiffusionLoader actual constructor() {
         cfg: Float,
         seed: Long
     ): ByteArray? = nativeTxt2Img(nativePtr,prompt,negative,width,height,steps,cfg,seed)
+
+    actual suspend fun saveImage(imageData: ByteArray, fileName: String): Boolean {
+        return try {
+            FileKit.saveImageToGallery(imageData,fileName)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
 
     private external fun nativeLoadModel(
         modelPath: String,

@@ -21,6 +21,9 @@
     <string name="loading">加载中...</string>
     <string name="select">选择</string>
     <string name="creating">创建中</string>
+    <string name="save_image">保存图片</string>
+    <string name="image_saved">图片保存成功</string>
+    <string name="image_save_failed">图片保存失败</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">设置</string>

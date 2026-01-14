@@ -22,6 +22,9 @@
     <string name="loading">Loading...</string>
     <string name="select">Select</string>
     <string name="creating">Creating</string>
+    <string name="save_image">Save Image</string>
+    <string name="image_saved">Image saved successfully</string>
+    <string name="image_save_failed">Failed to save image</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
