@@ -49,7 +49,7 @@ Mine StableDiffusion is a **native, offline-first AI art generation app** that b
 
 <div align="center">
 
-| 🤖 Android | 💻 Desktop |
+| 🤖 Android | 💻 Desktop |                  🎮 Setting                   |
 |:---:|:---:|:---:|
 | ![Android Demo](docs/android_screenshot_3.gif) | ![Desktop Demo](docs/desktop_screenshot.gif) | ![Desktop Demo](docs/desktop_screenshot4.gif) |
 
