@@ -45,4 +45,11 @@
     <string name="settings_cfg_scale">CFG Scale</string>
     <string name="settings_cfg_scale_description">Low = Creative | High = Precise</string>
     <string name="settings_current_configuration">Current Configuration</string>
+    <string name="settings_advanced_title">Advanced Settings</string>
+    <string name="settings_advanced_subtitle">Experimental features and optimizations</string>
+    <string name="settings_flash_attn">Flash Attention</string>
+    <string name="settings_flash_attn_desc">Reduces memory usage and potentially speeds up generation</string>
+    <string name="settings_quantization">Quantization (wtype)</string>
+    <string name="settings_quantization_desc">Model weight precision. Lower bits save RAM but may reduce quality.</string>
+    <string name="settings_quant_default">Default (F32)</string>
 </resources>

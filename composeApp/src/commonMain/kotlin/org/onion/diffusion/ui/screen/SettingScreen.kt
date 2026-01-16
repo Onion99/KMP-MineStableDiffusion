@@ -52,10 +52,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import minediffusion.composeapp.generated.resources.Res
+import minediffusion.composeapp.generated.resources.settings_advanced_subtitle
+import minediffusion.composeapp.generated.resources.settings_advanced_title
 import minediffusion.composeapp.generated.resources.settings_back
 import minediffusion.composeapp.generated.resources.settings_cfg_scale
 import minediffusion.composeapp.generated.resources.settings_cfg_scale_description
 import minediffusion.composeapp.generated.resources.settings_current_configuration
+import minediffusion.composeapp.generated.resources.settings_flash_attn
+import minediffusion.composeapp.generated.resources.settings_flash_attn_desc
 import minediffusion.composeapp.generated.resources.settings_generation_quality
 import minediffusion.composeapp.generated.resources.settings_generation_quality_subtitle
 import minediffusion.composeapp.generated.resources.settings_height
@@ -64,6 +68,9 @@ import minediffusion.composeapp.generated.resources.settings_image_dimensions_su
 import minediffusion.composeapp.generated.resources.settings_preset_landscape
 import minediffusion.composeapp.generated.resources.settings_preset_portrait
 import minediffusion.composeapp.generated.resources.settings_preset_square
+import minediffusion.composeapp.generated.resources.settings_quant_default
+import minediffusion.composeapp.generated.resources.settings_quantization
+import minediffusion.composeapp.generated.resources.settings_quantization_desc
 import minediffusion.composeapp.generated.resources.settings_quick_presets
 import minediffusion.composeapp.generated.resources.settings_steps
 import minediffusion.composeapp.generated.resources.settings_steps_description
@@ -200,8 +207,8 @@ fun SettingScreen(
 
             // Advanced Settings Section
             SettingsSectionCard(
-                title = "Advanced Settings",
-                subtitle = "Experimental features and optimizations",
+                title = stringResource(Res.string.settings_advanced_title),
+                subtitle = stringResource(Res.string.settings_advanced_subtitle),
                 icon = Icons.Default.Settings // Fallback if Build is not available or just generic
             ) {
                 // Flash Attention Switch
@@ -212,13 +219,13 @@ fun SettingScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Flash Attention",
+                            text = stringResource(Res.string.settings_flash_attn),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Reduces memory usage and potentially speeds up generation",
+                            text = stringResource(Res.string.settings_flash_attn_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -234,20 +241,20 @@ fun SettingScreen(
                 // Quantization Type (wtype)
                 Column {
                     Text(
-                        text = "Quantization (wtype)",
+                        text = stringResource(Res.string.settings_quantization),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Model weight precision. Lower bits save RAM but may reduce quality.",
+                        text = stringResource(Res.string.settings_quantization_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     
                     val wtypes = listOf(
-                        0 to "Default (F32)",
+                        0 to stringResource(Res.string.settings_quant_default),
                         1 to "F16",
                         2 to "Q4_0",
                         6 to "Q5_0",

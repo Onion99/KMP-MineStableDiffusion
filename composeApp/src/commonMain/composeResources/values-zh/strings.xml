@@ -44,4 +44,11 @@
     <string name="settings_cfg_scale">提示词相关性 (CFG)</string>
     <string name="settings_cfg_scale_description">低 = 创意 | 高 = 精准</string>
     <string name="settings_current_configuration">当前配置</string>
+    <string name="settings_advanced_title">高级设置</string>
+    <string name="settings_advanced_subtitle">实验性功能和优化</string>
+    <string name="settings_flash_attn">Flash Attention (闪电注意力)</string>
+    <string name="settings_flash_attn_desc">降低内存使用并可能加速生成</string>
+    <string name="settings_quantization">量化 (wtype)</string>
+    <string name="settings_quantization_desc">模型权重精度。低位更省内存但可能降低画质。</string>
+    <string name="settings_quant_default">默认 (F32)</string>
 </resources>
