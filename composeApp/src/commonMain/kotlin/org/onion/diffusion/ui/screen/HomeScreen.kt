@@ -178,7 +178,8 @@ fun HomeScreen(
                         chatViewModel.initLLM()
                     }
                 }
-            }
+            },
+            settingClick = onSettingsClick,
         )
         ChatMessagesList(chatMessages = chatMessages,snackbarHostState)
         
@@ -726,7 +727,7 @@ private fun AiMessage(
 @Composable
 fun LLMFileSelectTipDialog(
     showDialog: Boolean,
-    selectAction: () -> Unit
+    selectAction: () -> Unit,settingClick: () -> Unit
 ) {
     if (showDialog) {
         // koinInject唯一的“副作用”是 onCleared() 永远不会被调用
@@ -739,7 +740,19 @@ fun LLMFileSelectTipDialog(
         val isVaeModelLoading by chatViewModel.isVaeModelLoading
         val isLlmModelLoading by chatViewModel.isLlmModelLoading
         val coroutineScope = rememberCoroutineScope()
-        
+
+        val infiniteTransition = rememberInfiniteTransition(label = "settings_rotation")
+
+        // Subtle continuous rotation animation for visual interest
+        val rotation by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 20000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "gear_rotation"
+        )
         Dialog(
             onDismissRequest = {},
             properties = DialogProperties(dismissOnClickOutside = false)
@@ -766,16 +779,34 @@ fun LLMFileSelectTipDialog(
                             Res.readBytes("files/anim_ai_file_.lottie")
                         )
                     }
-                    Image(
-                        painter = rememberLottiePainter(
-                            composition = composition,
-                            iterations = Compottie.IterateForever
-                        ),
-                        contentDescription = "File animation",
-                        modifier = Modifier
-                            .size(120.dp)
-                            .padding(bottom = 8.dp)
-                    )
+                    Box(Modifier.fillMaxWidth().wrapContentHeight()){
+                        Image(
+                            painter = rememberLottiePainter(
+                                composition = composition,
+                                iterations = Compottie.IterateForever
+                            ),
+                            contentDescription = "File animation",
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(120.dp)
+                                .padding(bottom = 8.dp)
+                        )
+
+                        IconButton(
+                            onClick = settingClick,
+                            modifier = Modifier.align(Alignment.TopEnd).size(48.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = "Settings",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .graphicsLayer {
+                                        rotationZ = rotation
+                                    }
+                            )
+                        }
+                    }
 
                     // Title
                     /*MediumText(

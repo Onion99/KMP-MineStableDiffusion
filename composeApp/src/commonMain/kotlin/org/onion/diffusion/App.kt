@@ -47,7 +47,7 @@ fun App() {
                 // ---- 首页架构容器 ------
                 // mainScreen()
                 // ---- 首页架构容器,暂时不做多tab首页,先搭建起来再说 ------
-                homeScreen(onSettingsClick = { rootNavActions.popAndNavigation(MainRoute.SettingRoute) })
+                homeScreen(onSettingsClick = { rootNavActions.navigationTo(MainRoute.SettingRoute) })
                 // ---- 设置页面 ------
                 settingScreen(onBackClick = { rootNavActions.back() })
             }
