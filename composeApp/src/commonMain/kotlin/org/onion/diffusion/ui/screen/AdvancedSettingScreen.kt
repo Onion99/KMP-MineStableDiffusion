@@ -68,9 +68,11 @@ import minediffusion.composeapp.generated.resources.settings_keep_clip_on_cpu
 import minediffusion.composeapp.generated.resources.settings_keep_clip_on_cpu_desc
 import minediffusion.composeapp.generated.resources.settings_keep_vae_on_cpu
 import minediffusion.composeapp.generated.resources.settings_keep_vae_on_cpu_desc
+import minediffusion.composeapp.generated.resources.settings_quant_auto
 import minediffusion.composeapp.generated.resources.settings_quant_default
 import minediffusion.composeapp.generated.resources.settings_quantization
 import minediffusion.composeapp.generated.resources.settings_quantization_desc
+import minediffusion.composeapp.generated.resources.settings_quantization_warning
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.onion.diffusion.ui.navigation.route.RootRoute
@@ -187,9 +189,29 @@ fun AdvancedSettingScreen(
                         color = Color(0xFF666666) // Soft grey text
                     )
                     
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Warning Box
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color(0xFFFFF3E0)) // Warm warning background
+                            .border(1.dp, Color(0xFFFFB74D), RoundedCornerShape(12.dp))
+                            .padding(12.dp)
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.settings_quantization_warning),
+                            style = AppTheme.typography.bodySmall,
+                            color = Color(0xFFE65100), // Dark orange text
+                            lineHeight = 18.sp
+                        )
+                    }
+                    
                     Spacer(modifier = Modifier.height(20.dp))
                     
                     val wtypes = listOf(
+                        -1 to stringResource(Res.string.settings_quant_auto),
                         0 to stringResource(Res.string.settings_quant_default),
                         1 to "F16",
                         2 to "Q4_0",

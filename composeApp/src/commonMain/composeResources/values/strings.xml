@@ -51,7 +51,9 @@
     <string name="settings_flash_attn_desc">Reduces memory usage and potentially speeds up generation</string>
     <string name="settings_quantization">Quantization (wtype)</string>
     <string name="settings_quantization_desc">Model weight precision. Lower bits save RAM but may reduce quality.</string>
+    <string name="settings_quantization_warning">⚠️ Not recommended to change. Modifying this may cause long initialization times and potential negative effects on quality or stability.</string>
     <string name="settings_quant_default">Default (F32)</string>
+    <string name="settings_quant_auto">Auto (Recommended)</string>
     <string name="settings_offload_to_cpu">Offload to CPU</string>
     <string name="settings_offload_to_cpu_desc">Offload model computations to CPU to save GPU/memory</string>
     <string name="settings_keep_clip_on_cpu">Keep CLIP on CPU</string>

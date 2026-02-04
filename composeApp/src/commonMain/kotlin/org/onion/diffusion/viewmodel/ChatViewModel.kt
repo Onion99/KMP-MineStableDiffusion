@@ -47,8 +47,8 @@ class ChatViewModel  : ViewModel() {
     /** Flash Attention - optimize memory usage */
     var diffusionFlashAttn = mutableStateOf(false)
 
-    /** Quantization Type - 0: F32, 1: F16, 2: Q4_0, etc. */
-    var wtype = mutableStateOf(0)
+    /** Quantization Type - -1: Auto/Default, 0: F32, 1: F16, 2: Q4_0, etc. */
+    var wtype = mutableStateOf(-1)
 
     /** Offload to CPU - offload model computations to CPU */
     var offloadToCpu = mutableStateOf(false)

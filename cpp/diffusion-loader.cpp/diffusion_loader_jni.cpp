@@ -78,7 +78,10 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
     p.keep_clip_on_cpu = keepClipOnCpu;
     p.keep_vae_on_cpu = keepVaeOnCpu;
     p.diffusion_flash_attn = diffusionFlashAttn;
-    p.wtype = static_cast<sd_type_t>(wtype);
+    // Only set wtype if user explicitly chose a value (not -1/Auto)
+    if (wtype != -1) {
+        p.wtype = static_cast<sd_type_t>(wtype);
+    }
 
     // 创建 Stable Diffusion 上下文（核心步骤
     sd_ctx_t* SdContext = new_sd_ctx(&p);

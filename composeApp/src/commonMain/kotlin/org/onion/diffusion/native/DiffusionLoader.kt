@@ -10,7 +10,7 @@ expect class DiffusionLoader(){
         keepClipOnCpu: Boolean = false,
         keepVaeOnCpu: Boolean = false,
         diffusionFlashAttn: Boolean = false,
-        wtype: Int = 0
+        wtype: Int = -1
     )
     fun txt2Img(
         prompt: String, negative: String,
