@@ -62,6 +62,7 @@ import minediffusion.composeapp.generated.resources.settings_advanced_title
 import minediffusion.composeapp.generated.resources.settings_back
 import minediffusion.composeapp.generated.resources.settings_flash_attn
 import minediffusion.composeapp.generated.resources.settings_flash_attn_desc
+import minediffusion.composeapp.generated.resources.settings_flash_attn_info
 import minediffusion.composeapp.generated.resources.settings_offload_to_cpu
 import minediffusion.composeapp.generated.resources.settings_offload_to_cpu_desc
 import minediffusion.composeapp.generated.resources.settings_keep_clip_on_cpu
@@ -132,6 +133,28 @@ fun AdvancedSettingScreen(
                             checked = chatViewModel.diffusionFlashAttn.value,
                             onCheckedChange = { chatViewModel.diffusionFlashAttn.value = it }
                         )
+                    }
+                    
+                    // Flash Attention Info Box
+                    if (chatViewModel.diffusionFlashAttn.value) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFFE8F5E9)) // Light green success background
+                                .border(1.dp, Color(0xFF66BB6A), RoundedCornerShape(12.dp))
+                                .padding(12.dp)
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.settings_flash_attn_info),
+                                style = AppTheme.typography.bodySmall,
+                                color = Color(0xFF2E7D32), // Dark green text
+                                lineHeight = 18.sp
+                            )
+                        }
                     }
                     
                     SettingsRow(

@@ -47,7 +47,8 @@
     <string name="settings_advanced_title">高级设置</string>
     <string name="settings_advanced_subtitle">实验性功能和优化</string>
     <string name="settings_flash_attn">Flash Attention (闪电注意力)</string>
-    <string name="settings_flash_attn_desc">降低内存使用并可能加速生成</string>
+    <string name="settings_flash_attn_desc">内存优化的注意力算法。推荐在内存有限的设备上启用（&lt;8GB）。</string>
+    <string name="settings_flash_attn_info">**优势：**\n• 降低显存/内存使用约30-50%\n• 在现代GPU上可能加速生成\n• 数学上等价于标准注意力机制\n\n**兼容性：**\n• 在NVIDIA GPU上效果最佳（算力≥7.5）\n• 部分纯CPU环境可能不兼容\n• 如遇崩溃或画质异常请禁用\n\n**建议：**\n内存低于8GB或希望加速推理时启用。</string>
     <string name="settings_quantization">模型权重类型 (wtype)</string>
     <string name="settings_quantization_desc">控制模型权重在内存中的存储方式。精度越高=质量越好但占用内存越多。</string>
     <string name="settings_quantization_warning">⚠️ 仅供高级用户。更改需要重新加载模型（长时间初始化）且可能导致画质下降。大多数用户应保持"自动"。</string>

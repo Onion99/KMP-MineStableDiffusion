@@ -48,7 +48,8 @@
     <string name="settings_advanced_title">Advanced Settings</string>
     <string name="settings_advanced_subtitle">Experimental features and optimizations</string>
     <string name="settings_flash_attn">Flash Attention</string>
-    <string name="settings_flash_attn_desc">Reduces memory usage and potentially speeds up generation</string>
+    <string name="settings_flash_attn_desc">Memory-optimized attention algorithm. Recommended for devices with limited RAM (&lt;8GB).</string>
+    <string name="settings_flash_attn_info">**Benefits:**\n• Reduces VRAM/RAM usage by ~30-50%\n• May speed up generation on modern GPUs\n• Mathematically equivalent to standard attention\n\n**Compatibility:**\n• Works best on NVIDIA GPUs (compute capability ≥7.5)\n• May not work on some CPU-only setups\n• Disable if experiencing crashes or artifacts\n\n**Recommendation:**\nEnable if you have &lt;8GB RAM or want faster inference.</string>
     <string name="settings_quantization">Model Weight Type (wtype)</string>
     <string name="settings_quantization_desc">Controls how model weights are stored in memory. Higher precision = better quality but more RAM.</string>
     <string name="settings_quantization_warning">⚠️ Advanced users only. Changing this requires re-loading the model (long initialization) and may cause quality degradation. Most users should keep "Auto".</string>
