@@ -87,11 +87,11 @@ fun AdvancedSettingScreen(
 ) {
     val chatViewModel = koinInject<ChatViewModel>()
     
-    // Ethereal Background with animated nebulas
+    // Ethereal Light Background with animated nebulas
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF050510)) // Deep space black-blue
+            .background(Color(0xFFF8F9FF)) // Soft airy white-blue
     ) {
         EtherealBackground()
 
@@ -140,13 +140,13 @@ fun AdvancedSettingScreen(
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp
                         ),
-                        color = Color.White
+                        color = Color(0xFF1D1B20) // Dark text
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = stringResource(Res.string.settings_quantization_desc),
                         style = AppTheme.typography.bodySmall,
-                        color = Color(0xFFAAAAAA)
+                        color = Color(0xFF666666) // Soft grey text
                     )
                     
                     Spacer(modifier = Modifier.height(20.dp))
@@ -187,34 +187,34 @@ fun EtherealBackground() {
     )
     
     Canvas(modifier = Modifier.fillMaxSize()) {
-        // Nebula 1: Primary Cyan/Blue
+        // Nebula 1: Soft Cyan
         val x1 = center.x + cos(offset1) * size.width * 0.3f
         val y1 = center.y + sin(offset1) * size.height * 0.2f
         drawCircle(
             brush = Brush.radialGradient(
-                colors = listOf(Color(0xFF00C2FF).copy(0.15f), Color.Transparent),
+                colors = listOf(Color(0xFF00C2FF).copy(0.08f), Color.Transparent),
                 center = Offset(x1, y1),
                 radius = size.minDimension * 0.8f
             )
         )
         
-        // Nebula 2: Secondary Purple/Pink
+        // Nebula 2: Soft Pink/Lavender
         val x2 = center.x + cos(offset2 + 2f) * size.width * 0.4f
         val y2 = center.y + sin(offset2 + 2f) * size.height * 0.3f
         drawCircle(
             brush = Brush.radialGradient(
-                colors = listOf(Color(0xFFD600FF).copy(0.12f), Color.Transparent),
+                colors = listOf(Color(0xFFD600FF).copy(0.06f), Color.Transparent),
                 center = Offset(x2, y2),
                 radius = size.minDimension * 0.9f
             )
         )
         
-        // Static deep bottom glow
+        // Static Sunny Top Glow
         drawCircle(
             brush = Brush.verticalGradient(
-                colors = listOf(Color.Transparent, Color(0xFF000520)),
-                startY = size.height * 0.6f,
-                endY = size.height
+                colors = listOf(Color(0xFFFFFFFF), Color.Transparent),
+                startY = 0f,
+                endY = size.height * 0.5f
             )
         )
     }
@@ -227,15 +227,15 @@ private fun AdvancedSettingsHeader(onBackClick: () -> Unit) {
             modifier = Modifier
                 .size(44.dp)
                 .clip(CircleShape)
-                .border(1.dp, Brush.linearGradient(listOf(Color(0xFF00C2FF), Color(0xFFD600FF))), CircleShape)
-                .background(Color(0x22FFFFFF))
+                .border(1.dp, Brush.linearGradient(listOf(Color(0xFF00C2FF).copy(0.5f), Color(0xFFD600FF).copy(0.5f))), CircleShape)
+                .background(Color.White)
                 .clickable { onBackClick() },
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = null,
-                tint = Color.White,
+                tint = Color(0xFF1D1B20),
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -249,12 +249,12 @@ private fun AdvancedSettingsHeader(onBackClick: () -> Unit) {
                     fontWeight = FontWeight.Black,
                     letterSpacing = 2.sp
                 ),
-                color = Color.White
+                color = Color(0xFF1D1B20)
             )
             Text(
                 text = stringResource(Res.string.settings_advanced_subtitle),
                 style = AppTheme.typography.bodyMedium,
-                color = Color(0xFF00C2FF)
+                color = Color(0xFF007A99) // Darker Cyan for readability
             )
         }
     }
@@ -275,7 +275,7 @@ fun NeonSectionHeader(title: String) {
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.5.sp
             ),
-            color = Color(0xFFAAAAAA)
+            color = Color(0xFF666666)
         )
     }
 }
@@ -290,15 +290,15 @@ fun NeonGlassCard(content: @Composable () -> Unit) {
                 1.dp,
                 Brush.linearGradient(
                     colors = listOf(
-                        Color(0xFFFFFFFF).copy(alpha = 0.1f),
-                        Color(0xFFFFFFFF).copy(alpha = 0.02f)
+                        Color(0xFF00C2FF).copy(alpha = 0.2f),
+                        Color(0xFFD600FF).copy(alpha = 0.05f)
                     ),
                     start = Offset(0f, 0f),
                     end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
                 ),
                 RoundedCornerShape(24.dp)
             )
-            .background(Color(0xFF101018).copy(alpha = 0.7f))
+            .background(Color(0xFFFFFFFF).copy(alpha = 0.8f)) // High opacity white glass
     ) {
         content()
     }
@@ -321,13 +321,13 @@ fun SettingsRow(
             Text(
                 text = title,
                 style = AppTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
-                color = Color.White
+                color = Color(0xFF1D1B20)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = subtitle,
                 style = AppTheme.typography.bodySmall,
-                color = Color(0xFFAAAAAA)
+                color = Color(0xFF666666)
             )
         }
         control()
@@ -343,14 +343,14 @@ fun HolographicSwitch(
         targetValue = if (checked) 24.dp else 4.dp,
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
     )
-    val glowAlpha by animateFloatAsState(if (checked) 0.8f else 0f)
+    val glowAlpha by animateFloatAsState(if (checked) 0.6f else 0f)
 
     Box(
         modifier = Modifier
             .size(52.dp, 32.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF000000).copy(0.5f))
-            .border(1.5.dp, if(checked) Color(0xFF00C2FF).copy(0.5f) else Color(0xFF444444), RoundedCornerShape(16.dp))
+            .background(Color(0xFFF0F0F0)) // Light grey track
+            .border(1.5.dp, if(checked) Color(0xFF00C2FF).copy(0.5f) else Color(0xFFDDDDDD), RoundedCornerShape(16.dp))
             .clickable { onCheckedChange(!checked) }
     ) {
         // Active Glow
@@ -371,11 +371,12 @@ fun HolographicSwitch(
                 .align(Alignment.CenterStart)
                 .offset(x = thumbOffset)
                 .size(24.dp)
-                .shadow(8.dp, CircleShape, spotColor = Color(0xFF00C2FF))
-                .background(if(checked) Color(0xFF00C2FF) else Color(0xFF888888), CircleShape)
+                .shadow(4.dp, CircleShape, spotColor = Color(0xFF00C2FF).copy(0.5f))
+                .background(if(checked) Color(0xFF00C2FF) else Color.White, CircleShape)
         ) {
+             // Inner reflection
              Box(modifier = Modifier.fillMaxSize().background(
-                 Brush.radialGradient(listOf(Color.White.copy(0.8f), Color.Transparent)),
+                 Brush.radialGradient(listOf(Color.White.copy(0.9f), Color.Transparent)),
                  CircleShape
              ))
         }
@@ -399,7 +400,7 @@ fun CyberGridSelection(
                     val borderBrush = if (isSelected) {
                         Brush.linearGradient(listOf(Color(0xFF00C2FF), Color(0xFFD600FF)))
                     } else {
-                        SolidColor(Color(0xFF333333))
+                        SolidColor(Color(0xFFDDDDDD))
                     }
                     
                     Box(
@@ -407,7 +408,7 @@ fun CyberGridSelection(
                             .weight(1f)
                             .height(44.dp)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(if(isSelected) Color(0xFF00C2FF).copy(0.1f) else Color.Transparent)
+                            .background(if(isSelected) Color(0xFF00C2FF).copy(0.1f) else Color.White.copy(0.5f))
                             .border(1.dp, borderBrush, RoundedCornerShape(12.dp))
                             .clickable { onItemSelected(items.indexOf(item)) },
                         contentAlignment = Alignment.Center
@@ -415,7 +416,7 @@ fun CyberGridSelection(
                          Text(
                             text = item.second,
                             style = AppTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                            color = if(isSelected) Color.White else Color(0xFF888888)
+                            color = if(isSelected) Color(0xFF007A99) else Color(0xFF666666) // Colored text when selected
                         )
                     }
                 }
