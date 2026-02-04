@@ -6,6 +6,9 @@ expect class DiffusionLoader(){
         modelPath: String,
         vaePath: String = "",
         llmPath: String = "",
+        offloadToCpu: Boolean = false,
+        keepClipOnCpu: Boolean = false,
+        keepVaeOnCpu: Boolean = false,
         diffusionFlashAttn: Boolean = false,
         wtype: Int = 0
     )

@@ -51,4 +51,10 @@
     <string name="settings_quantization">量化 (wtype)</string>
     <string name="settings_quantization_desc">模型权重精度。低位更省内存但可能降低画质。</string>
     <string name="settings_quant_default">默认 (F32)</string>
+    <string name="settings_offload_to_cpu">CPU卸载</string>
+    <string name="settings_offload_to_cpu_desc">将模型计算卸载到CPU以节省GPU/内存</string>
+    <string name="settings_keep_clip_on_cpu">CLIP保留在CPU</string>
+    <string name="settings_keep_clip_on_cpu_desc">将CLIP模型保留在CPU上以减少GPU内存使用</string>
+    <string name="settings_keep_vae_on_cpu">VAE保留在CPU</string>
+    <string name="settings_keep_vae_on_cpu_desc">将VAE解码器保留在CPU上以减少GPU内存使用</string>
 </resources>

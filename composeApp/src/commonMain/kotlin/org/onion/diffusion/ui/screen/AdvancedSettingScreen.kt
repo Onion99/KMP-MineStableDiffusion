@@ -62,6 +62,12 @@ import minediffusion.composeapp.generated.resources.settings_advanced_title
 import minediffusion.composeapp.generated.resources.settings_back
 import minediffusion.composeapp.generated.resources.settings_flash_attn
 import minediffusion.composeapp.generated.resources.settings_flash_attn_desc
+import minediffusion.composeapp.generated.resources.settings_offload_to_cpu
+import minediffusion.composeapp.generated.resources.settings_offload_to_cpu_desc
+import minediffusion.composeapp.generated.resources.settings_keep_clip_on_cpu
+import minediffusion.composeapp.generated.resources.settings_keep_clip_on_cpu_desc
+import minediffusion.composeapp.generated.resources.settings_keep_vae_on_cpu
+import minediffusion.composeapp.generated.resources.settings_keep_vae_on_cpu_desc
 import minediffusion.composeapp.generated.resources.settings_quant_default
 import minediffusion.composeapp.generated.resources.settings_quantization
 import minediffusion.composeapp.generated.resources.settings_quantization_desc
@@ -114,14 +120,46 @@ fun AdvancedSettingScreen(
 
             // Neon Glass Card 1
             NeonGlassCard {
-                SettingsRow(
-                    title = stringResource(Res.string.settings_flash_attn),
-                    subtitle = stringResource(Res.string.settings_flash_attn_desc),
-                ) {
-                    HolographicSwitch(
-                        checked = chatViewModel.diffusionFlashAttn.value,
-                        onCheckedChange = { chatViewModel.diffusionFlashAttn.value = it }
-                    )
+                Column {
+                    SettingsRow(
+                        title = stringResource(Res.string.settings_flash_attn),
+                        subtitle = stringResource(Res.string.settings_flash_attn_desc),
+                    ) {
+                        HolographicSwitch(
+                            checked = chatViewModel.diffusionFlashAttn.value,
+                            onCheckedChange = { chatViewModel.diffusionFlashAttn.value = it }
+                        )
+                    }
+                    
+                    SettingsRow(
+                        title = stringResource(Res.string.settings_offload_to_cpu),
+                        subtitle = stringResource(Res.string.settings_offload_to_cpu_desc),
+                    ) {
+                        HolographicSwitch(
+                            checked = chatViewModel.offloadToCpu.value,
+                            onCheckedChange = { chatViewModel.offloadToCpu.value = it }
+                        )
+                    }
+                    
+                    SettingsRow(
+                        title = stringResource(Res.string.settings_keep_clip_on_cpu),
+                        subtitle = stringResource(Res.string.settings_keep_clip_on_cpu_desc),
+                    ) {
+                        HolographicSwitch(
+                            checked = chatViewModel.keepClipOnCpu.value,
+                            onCheckedChange = { chatViewModel.keepClipOnCpu.value = it }
+                        )
+                    }
+                    
+                    SettingsRow(
+                        title = stringResource(Res.string.settings_keep_vae_on_cpu),
+                        subtitle = stringResource(Res.string.settings_keep_vae_on_cpu_desc),
+                    ) {
+                        HolographicSwitch(
+                            checked = chatViewModel.keepVaeOnCpu.value,
+                            onCheckedChange = { chatViewModel.keepVaeOnCpu.value = it }
+                        )
+                    }
                 }
             }
 

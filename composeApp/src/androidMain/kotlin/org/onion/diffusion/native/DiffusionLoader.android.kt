@@ -41,6 +41,9 @@ actual class DiffusionLoader actual constructor() {
         modelPath: String,
         vaePath: String,
         llmPath: String,
+        offloadToCpu: Boolean,
+        keepClipOnCpu: Boolean,
+        keepVaeOnCpu: Boolean,
         diffusionFlashAttn: Boolean,
         wtype: Int
     ) {
@@ -48,9 +51,9 @@ actual class DiffusionLoader actual constructor() {
             modelPath,
             vaePath,
             llmPath,
-            false,
-            false,
-            false,
+            offloadToCpu,
+            keepClipOnCpu,
+            keepVaeOnCpu,
             diffusionFlashAttn,
             wtype
         )

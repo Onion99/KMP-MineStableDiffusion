@@ -50,6 +50,16 @@ class ChatViewModel  : ViewModel() {
     /** Quantization Type - 0: F32, 1: F16, 2: Q4_0, etc. */
     var wtype = mutableStateOf(0)
 
+    /** Offload to CPU - offload model computations to CPU */
+    var offloadToCpu = mutableStateOf(false)
+
+    /** Keep CLIP on CPU - keep CLIP model on CPU */
+    var keepClipOnCpu = mutableStateOf(false)
+
+    /** Keep VAE on CPU - keep VAE decoder on CPU */
+    var keepVaeOnCpu = mutableStateOf(false)
+
+
     suspend fun selectDiffusionModelFile(): String{
         isDiffusionModelLoading.value = true
         val diffusionModelPath = diffusionLoader.getModelFilePath()
@@ -83,6 +93,9 @@ class ChatViewModel  : ViewModel() {
                 modelPath = diffusionModelPath.value,
                 vaePath = vaePath.value,
                 llmPath = llmPath.value,
+                offloadToCpu = offloadToCpu.value,
+                keepClipOnCpu = keepClipOnCpu.value,
+                keepVaeOnCpu = keepVaeOnCpu.value,
                 diffusionFlashAttn = diffusionFlashAttn.value,
                 wtype = wtype.value
             )

@@ -52,4 +52,10 @@
     <string name="settings_quantization">Quantization (wtype)</string>
     <string name="settings_quantization_desc">Model weight precision. Lower bits save RAM but may reduce quality.</string>
     <string name="settings_quant_default">Default (F32)</string>
+    <string name="settings_offload_to_cpu">Offload to CPU</string>
+    <string name="settings_offload_to_cpu_desc">Offload model computations to CPU to save GPU/memory</string>
+    <string name="settings_keep_clip_on_cpu">Keep CLIP on CPU</string>
+    <string name="settings_keep_clip_on_cpu_desc">Keep CLIP model on CPU to reduce GPU memory usage</string>
+    <string name="settings_keep_vae_on_cpu">Keep VAE on CPU</string>
+    <string name="settings_keep_vae_on_cpu_desc">Keep VAE decoder on CPU to reduce GPU memory usage</string>
 </resources>

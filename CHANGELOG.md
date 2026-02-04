@@ -4,6 +4,11 @@
 
 本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## v3.0.0
+
+- (offloadToCpu, keepClipOnCpu, keepVaeOnCpu) independently controllable in the AdvancedSettingScreen
+- 
+
 ## v2.3.0
 
 - Flash Attention Switch
