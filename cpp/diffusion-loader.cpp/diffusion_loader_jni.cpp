@@ -65,9 +65,11 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
     sd_ctx_params_init(&p);
     // 配置参数,将从 Java 传来的参数赋值给 C++ 结构体
     // 配置 VAE 路径(如果提供)
-    if (vaePath && strlen(vaePath) > 0 && llmPath && strlen(llmPath) > 0) {
+    if (vaePath && strlen(vaePath) > 0 || llmPath && strlen(llmPath) > 0) {
         p.diffusion_model_path = modelPath ? modelPath : "";
-    } else p.model_path = modelPath ? modelPath : "";
+    } else {
+        p.model_path = modelPath ? modelPath : "";
+    }
     p.vae_path = vaePath ? vaePath : "" ;
     p.llm_path = llmPath ? llmPath : "" ;
     

@@ -15,6 +15,9 @@ import org.onion.diffusion.native.DiffusionLoader
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
+import org.jetbrains.compose.resources.getString
+import minediffusion.composeapp.generated.resources.Res
+import minediffusion.composeapp.generated.resources.image_generation_finished
 
 class ChatViewModel  : ViewModel() {
 
@@ -127,6 +130,7 @@ class ChatViewModel  : ViewModel() {
                     println("Image prompt: $promptContent")
                     println("Image negative: $negativeContent")
                     // Call txt2Img to generate image from the query prompt
+                    val startTime = Clock.System.now()
                     val imageByteArray = diffusionLoader.txt2Img(
                         prompt = promptContent,
                         negative = negativeContent,
@@ -161,8 +165,10 @@ class ChatViewModel  : ViewModel() {
                     if (_currentChatMessages.isNotEmpty()) {
                         val lastIndex = _currentChatMessages.lastIndex
                         _currentChatMessages.removeAt(lastIndex)
+                        val generationDuration = Clock.System.now() - startTime
+                        val msg = getString(Res.string.image_generation_finished, generationDuration.toString())
                         _currentChatMessages.add(lastIndex, ChatMessage(
-                            message = "图片生成完成:${imageByteArray?.size}字节",
+                            message = msg,
                             isUser = false,
                             image = imageByteArray
                         ))

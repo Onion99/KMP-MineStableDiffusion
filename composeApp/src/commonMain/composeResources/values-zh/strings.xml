@@ -24,6 +24,7 @@
     <string name="save_image">保存图片</string>
     <string name="image_saved">图片保存成功</string>
     <string name="image_save_failed">图片保存失败</string>
+    <string name="image_generation_finished">图片生成完成: %s</string>
 
     <!-- Settings Screen -->
     <string name="settings_title">设置</string>
