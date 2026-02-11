@@ -4,6 +4,10 @@
 
 本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## v3.1.0
+
+- Fix FLUX Model loading issue
+
 ## v3.0.0
 
 ### 🎨 Advanced Settings Overhaul
