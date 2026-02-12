@@ -201,6 +201,9 @@ else()
     #  -Wl,--exclude-libs,ALL: 另一个体积优化选项，防止静态库中的所有符号都被添加到动态符号表中
     #target_link_options(sdloader PRIVATE "-Wl,--gc-sections" "-Wl,--exclude-libs,ALL")
     target_link_options(sdloader PRIVATE -Wl,--gc-sections)
+    if(UNIX AND NOT APPLE AND NOT ANDROID)
+        target_link_options(sdloader PRIVATE -static-libstdc++ -static-libgcc)
+    endif()
 endif()
 # C-指定头文件 (.h, .hpp) 的搜索路径。为JNI库添加 stable-diffusion 的头文件搜索路径
 # PUBLIC: 我自己需要这个路径，链接我的目标也需要这个路径。 (最常用)
