@@ -27,6 +27,7 @@ actual class DiffusionLoader actual constructor() {
         val androidFile = FileKit.openFilePicker(type = FileKitType.File(listOf(
             "safetensors","ckpt","pt","bin","gguf"
         )))
+        androidFile ?: return ""
         val file = File(FileKit.context.filesDir, androidFile!!.name)
         if(file.exists()) return file.absolutePath
         FileKit.context.contentResolver.openInputStream((androidFile?.absolutePath() ?: return "").toUri()).use { inputStream ->

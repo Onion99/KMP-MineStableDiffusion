@@ -160,7 +160,7 @@ fun HomeScreen(
         val keyboardController = LocalSoftwareKeyboardController.current
         val focusManager = LocalFocusManager.current
         val snackbarHostState = remember { SnackbarHostState() }
-        var showFileDialog by remember { mutableStateOf(chatViewModel.diffusionModelPath.value.isEmpty()) }
+        var showFileDialog by remember { mutableStateOf(chatViewModel.diffusionModelPath.value.isEmpty() || chatViewModel.loadingModelState.value == 0) }
         val coroutineScope = rememberCoroutineScope()
         coroutineScope.launch {
             chatViewModel.loadingModelState.collect { state ->
@@ -770,7 +770,7 @@ fun LLMFileSelectTipDialog(
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
+                    .fillMaxWidth(0.85f)
                     .fillMaxHeight(0.85f),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface

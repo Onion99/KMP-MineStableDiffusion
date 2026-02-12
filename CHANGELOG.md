@@ -4,6 +4,11 @@
 
 本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## v4.0.0
+
+- fix linux system error:The following packages have unmet dependencies
+- fix android ui visible problem and exception
+
 ## v3.2.0
 
 - add clipLPath、clipGPath、t5xxlPath
