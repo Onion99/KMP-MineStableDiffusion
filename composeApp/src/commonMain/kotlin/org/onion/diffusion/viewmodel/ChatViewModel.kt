@@ -60,13 +60,13 @@ class ChatViewModel  : ViewModel() {
     var wtype = mutableStateOf(-1)
 
     /** Offload to CPU - offload model computations to CPU */
-    var offloadToCpu = mutableStateOf(false)
+    var offloadToCpu = mutableStateOf(true)
 
     /** Keep CLIP on CPU - keep CLIP model on CPU */
-    var keepClipOnCpu = mutableStateOf(false)
+    var keepClipOnCpu = mutableStateOf(true)
 
     /** Keep VAE on CPU - keep VAE decoder on CPU */
-    var keepVaeOnCpu = mutableStateOf(false)
+    var keepVaeOnCpu = mutableStateOf(true)
 
 
     suspend fun selectDiffusionModelFile(): String{
