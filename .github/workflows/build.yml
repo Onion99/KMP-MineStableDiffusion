@@ -55,7 +55,7 @@ jobs:
             task: ./gradlew packageReleaseDmg
 
           - name: linux-x86_64
-            runner: ubuntu-latest
+            runner: ubuntu-22.04
             task: ./gradlew createReleaseDistributable packageReleaseDeb packageReleaseRpm
 
           #          - name: linux-aarch64
