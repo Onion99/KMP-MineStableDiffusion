@@ -4,6 +4,10 @@
 
 本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## v4.2.1
+
+- android enable mmap default
+
 ## v4.2.0
 
 - modify: offloadToCpu && keepClipOnCpu && keepVaeOnCpu 
