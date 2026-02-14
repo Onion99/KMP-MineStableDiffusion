@@ -1,4 +1,7 @@
 ## 下载
+
+>We're still iterating on this project, so there might be some bugs. If things aren't working right, feel free to try an older release
+
 | 系统             | 格式       | 下载链接                                                                                                                                                                                           | 说明                                                                                   |
 |----------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | Android        | apk      | [MineStableDiffusion-__VERSION__.apk](https://github.com/Onion99/KMP-MineStableDiffusion/releases/download/v__VERSION__/MineStableDiffusion-__VERSION__.apk)                                   |                                                                                      |
