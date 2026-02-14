@@ -13,6 +13,8 @@ expect class DiffusionLoader(){
         keepClipOnCpu: Boolean = false,
         keepVaeOnCpu: Boolean = false,
         diffusionFlashAttn: Boolean = false,
+        enableMmap: Boolean = false,
+        diffusionConvDirect: Boolean = false,
         wtype: Int = -1
     )
     fun txt2Img(

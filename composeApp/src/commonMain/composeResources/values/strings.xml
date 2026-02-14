@@ -63,4 +63,8 @@
     <string name="settings_keep_clip_on_cpu_desc">Keep CLIP model on CPU to reduce GPU memory usage</string>
     <string name="settings_keep_vae_on_cpu">Keep VAE on CPU</string>
     <string name="settings_keep_vae_on_cpu_desc">Keep VAE decoder on CPU to reduce GPU memory usage</string>
+    <string name="settings_enable_mmap">Enable MMAP</string>
+    <string name="settings_enable_mmap_desc">Memory-map the model weights instead of loading them into RAM. Reduces initial RAM usage but may increase disk I/O.</string>
+    <string name="settings_conv_direct">Direct Convolution</string>
+    <string name="settings_conv_direct_desc">Enable direct convolution optimization in the diffusion model. Experimental performance boost on some hardware.</string>
 </resources>

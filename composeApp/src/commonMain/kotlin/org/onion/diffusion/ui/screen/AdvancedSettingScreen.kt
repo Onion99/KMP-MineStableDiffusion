@@ -75,6 +75,10 @@ import minediffusion.composeapp.generated.resources.settings_quant_info
 import minediffusion.composeapp.generated.resources.settings_quantization
 import minediffusion.composeapp.generated.resources.settings_quantization_desc
 import minediffusion.composeapp.generated.resources.settings_quantization_warning
+import minediffusion.composeapp.generated.resources.settings_enable_mmap
+import minediffusion.composeapp.generated.resources.settings_enable_mmap_desc
+import minediffusion.composeapp.generated.resources.settings_conv_direct
+import minediffusion.composeapp.generated.resources.settings_conv_direct_desc
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.onion.diffusion.ui.navigation.route.RootRoute
@@ -184,6 +188,26 @@ fun AdvancedSettingScreen(
                         HolographicSwitch(
                             checked = chatViewModel.keepVaeOnCpu.value,
                             onCheckedChange = { chatViewModel.keepVaeOnCpu.value = it }
+                        )
+                    }
+
+                    SettingsRow(
+                        title = stringResource(Res.string.settings_enable_mmap),
+                        subtitle = stringResource(Res.string.settings_enable_mmap_desc),
+                    ) {
+                        HolographicSwitch(
+                            checked = chatViewModel.enableMmap.value,
+                            onCheckedChange = { chatViewModel.enableMmap.value = it }
+                        )
+                    }
+
+                    SettingsRow(
+                        title = stringResource(Res.string.settings_conv_direct),
+                        subtitle = stringResource(Res.string.settings_conv_direct_desc),
+                    ) {
+                        HolographicSwitch(
+                            checked = chatViewModel.diffusionConvDirect.value,
+                            onCheckedChange = { chatViewModel.diffusionConvDirect.value = it }
                         )
                     }
                 }

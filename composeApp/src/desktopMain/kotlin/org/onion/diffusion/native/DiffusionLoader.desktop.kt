@@ -28,6 +28,8 @@ actual class DiffusionLoader actual constructor() {
         keepClipOnCpu: Boolean,
         keepVaeOnCpu: Boolean,
         diffusionFlashAttn: Boolean,
+        enableMmap: Boolean,
+        diffusionConvDirect: Boolean,
         wtype: Int
     ) {
         nativePtr = nativeLoadModel(
@@ -41,6 +43,8 @@ actual class DiffusionLoader actual constructor() {
             keepClipOnCpu,
             keepVaeOnCpu,
             diffusionFlashAttn,
+            enableMmap,
+            diffusionConvDirect,
             wtype
         )
     }
@@ -80,6 +84,8 @@ actual class DiffusionLoader actual constructor() {
         keepClipOnCpu: Boolean,
         keepVaeOnCpu: Boolean,
         diffusionFlashAttn: Boolean,
+        enableMmap: Boolean,
+        diffusionConvDirect: Boolean,
         wtype: Int
     ): Long
     private external fun nativeTxt2Img(

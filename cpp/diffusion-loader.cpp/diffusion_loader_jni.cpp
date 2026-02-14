@@ -45,8 +45,9 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
         jstring jClipLPath,
         jstring jClipGPath,
         jstring jT5xxlPath,
-        jboolean offloadToCpu,jboolean keepClipOnCpu,jboolean keepVaeOnCpu,
-        jboolean diffusionFlashAttn, jint wtype){
+        jboolean offloadToCpu, jboolean keepClipOnCpu, jboolean keepVaeOnCpu,
+        jboolean diffusionFlashAttn, jboolean enableMmap, jboolean diffusionConvDirect, jint wtype){
+
     //(void)clazz这是一个常见的技巧,用来告诉编译器 clazz 这个参数我们在此函数中没有使用,以避免编译器发出 "unused parameter" (未使用参数) 的警告
     (void) clazz;
 
@@ -103,6 +104,9 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
     p.keep_clip_on_cpu = keepClipOnCpu;
     p.keep_vae_on_cpu = keepVaeOnCpu;
     p.diffusion_flash_attn = diffusionFlashAttn;
+    p.enable_mmap = enableMmap;
+    p.diffusion_conv_direct = diffusionConvDirect;
+
     // Only set wtype if user explicitly chose a value (not -1/Auto)
     if (wtype != -1) {
         p.wtype = static_cast<sd_type_t>(wtype);

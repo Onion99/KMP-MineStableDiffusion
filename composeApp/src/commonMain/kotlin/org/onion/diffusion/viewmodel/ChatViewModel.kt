@@ -18,8 +18,10 @@ import kotlin.time.measureTime
 import org.jetbrains.compose.resources.getString
 import minediffusion.composeapp.generated.resources.Res
 import minediffusion.composeapp.generated.resources.image_generation_finished
+import org.onion.diffusion.getPlatform
 
 class ChatViewModel  : ViewModel() {
+
 
     var diffusionLoader:DiffusionLoader = DiffusionLoader()
     var diffusionModelPath = mutableStateOf("")
@@ -60,13 +62,21 @@ class ChatViewModel  : ViewModel() {
     var wtype = mutableStateOf(-1)
 
     /** Offload to CPU - offload model computations to CPU */
-    var offloadToCpu = mutableStateOf(true)
+    var offloadToCpu = mutableStateOf(false)
 
     /** Keep CLIP on CPU - keep CLIP model on CPU */
     var keepClipOnCpu = mutableStateOf(true)
 
     /** Keep VAE on CPU - keep VAE decoder on CPU */
-    var keepVaeOnCpu = mutableStateOf(true)
+    var keepVaeOnCpu = mutableStateOf(false)
+    
+    /** Enable MMAP - memory map the model weights */
+    var enableMmap = mutableStateOf(getPlatform().name.startsWith("Android"))
+
+
+    /** Direct Convolution - optimize convolution in diffusion model */
+    var diffusionConvDirect = mutableStateOf(false)
+
 
 
     suspend fun selectDiffusionModelFile(): String{
@@ -133,8 +143,11 @@ class ChatViewModel  : ViewModel() {
                 keepClipOnCpu = keepClipOnCpu.value,
                 keepVaeOnCpu = keepVaeOnCpu.value,
                 diffusionFlashAttn = diffusionFlashAttn.value,
+                enableMmap = enableMmap.value,
+                diffusionConvDirect = diffusionConvDirect.value,
                 wtype = wtype.value
             )
+
             println("=== Model Path ===")
             println("Model Path: ${diffusionModelPath.value}")
             println("VAE Path: ${vaePath.value}")

@@ -62,4 +62,8 @@
     <string name="settings_keep_clip_on_cpu_desc">将CLIP模型保留在CPU上以减少GPU内存使用</string>
     <string name="settings_keep_vae_on_cpu">VAE保留在CPU</string>
     <string name="settings_keep_vae_on_cpu_desc">将VAE解码器保留在CPU上以减少GPU内存使用</string>
+    <string name="settings_enable_mmap">启用 MMAP</string>
+    <string name="settings_enable_mmap_desc">将模型权重进行内存映射，而不是全部加载到内存。减少启动时的内存占用，但会增加磁盘 I/O。</string>
+    <string name="settings_conv_direct">直接卷积 (Conv Direct)</string>
+    <string name="settings_conv_direct_desc">在扩散模型中启用直接卷积优化。在特定硬件上可能有实验性的性能提升。</string>
 </resources>
