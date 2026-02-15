@@ -23,6 +23,20 @@ import org.onion.diffusion.getPlatform
 
 class ChatViewModel  : ViewModel() {
 
+    /** Format milliseconds into human-readable duration: "0.85s" / "12.3s" / "2m 15s" */
+    private fun formatDuration(millis: Long): String {
+        val totalSeconds = millis / 1000.0
+        return when {
+            totalSeconds < 1.0 -> "%.2fs".format(totalSeconds)
+            totalSeconds < 60.0 -> "%.1fs".format(totalSeconds)
+            else -> {
+                val minutes = (totalSeconds / 60).toInt()
+                val seconds = (totalSeconds % 60).toInt()
+                "${minutes}m ${seconds}s"
+            }
+        }
+    }
+
 
     var diffusionLoader:DiffusionLoader = DiffusionLoader()
     var diffusionModelPath = mutableStateOf("")
@@ -226,7 +240,7 @@ class ChatViewModel  : ViewModel() {
                         val lastIndex = _currentChatMessages.lastIndex
                         _currentChatMessages.removeAt(lastIndex)
                         val generationDuration = Clock.System.now().toEpochMilliseconds() - startTime
-                        val msg = getString(Res.string.image_generation_finished).replace("%s", "${generationDuration/1000} s")
+                        val msg = getString(Res.string.image_generation_finished).replace("%s", formatDuration(generationDuration))
                         _currentChatMessages.add(lastIndex, ChatMessage(
                             message = msg,
                             isUser = false,
@@ -288,7 +302,7 @@ class ChatViewModel  : ViewModel() {
                         _currentChatMessages.removeAt(lastIndex)
                         val generationDuration = Clock.System.now().toEpochMilliseconds() - startTime
                         val msg = getString(Res.string.video_generation_finished)
-                            .replaceFirst("%s", "${generationDuration/1000} s")
+                            .replaceFirst("%s", formatDuration(generationDuration))
                             .replaceFirst("%s", "${frames?.size ?: 0}")
                         _currentChatMessages.add(lastIndex, ChatMessage(
                             message = msg,
