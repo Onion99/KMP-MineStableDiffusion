@@ -163,7 +163,7 @@ graph TB
 - **Image Loading**: Coil3 v3.3.0
 - **Concurrency**: Kotlin Coroutines
 - **Native Engine**: [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp)
-- **LLM Support**: [llama.cpp](https://github.com/ggerganov/llama.cpp)
+- **Native Engine ++**: [llama.cpp](https://github.com/ggerganov/llama.cpp)
 
 ---
 
