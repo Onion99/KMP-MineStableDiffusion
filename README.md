@@ -130,8 +130,8 @@ Output: High-quality AI-generated image
 
 > [!TIP]
 > **Memory Optimization**:
-> - **Android**: If you encounter crashes due to insufficient memory, try enabling **Offload to CPU** or lowering the **wtype** (Weight Type) value in Settings.
-> - **macOS**: It is highly recommended to enable **Offload to CPU** to prevent potential crashes during generation.
+> - **Android**: **Mmap** is enabled by default. You can manually disable it in Settings if you encounter any issues.
+> - **macOS**: **CLIP on CPU** is enabled by default to prevent potential crashes during generation.
 
 <img src="./docs/setting_tip.webp" height="298" width="426"  alt="setting"/>
 
