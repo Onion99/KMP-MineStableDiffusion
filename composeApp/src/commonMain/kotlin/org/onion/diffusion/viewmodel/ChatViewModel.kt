@@ -15,6 +15,7 @@ import org.onion.diffusion.native.DiffusionLoader
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
+import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.getString
 import minediffusion.composeapp.generated.resources.Res
 import minediffusion.composeapp.generated.resources.image_generation_finished
@@ -27,8 +28,14 @@ class ChatViewModel  : ViewModel() {
     private fun formatDuration(millis: Long): String {
         val totalSeconds = millis / 1000.0
         return when {
-            totalSeconds < 1.0 -> "%.2fs".format(totalSeconds)
-            totalSeconds < 60.0 -> "%.1fs".format(totalSeconds)
+            totalSeconds < 1.0 -> {
+                val hundredths = (totalSeconds * 100).roundToInt()
+                "${hundredths / 100}.${(hundredths % 100).toString().padStart(2, '0')}s"
+            }
+            totalSeconds < 60.0 -> {
+                val tenths = (totalSeconds * 10).roundToInt()
+                "${tenths / 10}.${tenths % 10}s"
+            }
             else -> {
                 val minutes = (totalSeconds / 60).toInt()
                 val seconds = (totalSeconds % 60).toInt()
