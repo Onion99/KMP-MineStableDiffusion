@@ -28,6 +28,22 @@ kotlin {
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
+        val libDir = if (iosTarget.name == "iosArm64") "ios-device" else "ios-simulator"
+        iosTarget.binaries.all {
+            linkerOpts += listOf(
+                "-L${project.file("${rootProject.projectDir}/cpp/libs/$libDir")}",
+                "-lstable-diffusion",
+                "-lggml",
+                "-lggml-base",
+                "-lggml-cpu",
+                "-lggml-blas",
+                "-lggml-metal",
+                "-framework", "Metal",
+                "-framework", "MetalPerformanceShaders",
+                "-framework", "Foundation",
+                "-framework", "Accelerate"
+            )
+        }
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
