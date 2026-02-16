@@ -492,8 +492,21 @@ tasks.register<Exec>("buildIosNativeLibs") {
     }
 
     // Declare inputs and outputs for up-to-date checks
-    inputs.dir(rootProject.file("cpp/stable-diffusion.cpp"))
+    val inputDir = rootProject.file("cpp/stable-diffusion.cpp")
+    inputs.files(fileTree(inputDir) {
+        exclude("**/.git/**")
+        exclude("**/build/**")
+    })
     inputs.file(script)
-    outputs.dir(rootProject.file("cpp/libs/ios-device"))
-    outputs.dir(rootProject.file("cpp/libs/ios-simulator"))
+    
+    val outputDeviceDir = rootProject.file("cpp/libs/ios-device")
+    val outputSimDir = rootProject.file("cpp/libs/ios-simulator")
+    outputs.dir(outputDeviceDir)
+    outputs.dir(outputSimDir)
+
+    // Custom up-to-date check to be safe
+    outputs.upToDateWhen {
+        outputDeviceDir.exists() && outputDeviceDir.listFiles()?.isNotEmpty() == true &&
+        outputSimDir.exists() && outputSimDir.listFiles()?.isNotEmpty() == true
+    }
 }
