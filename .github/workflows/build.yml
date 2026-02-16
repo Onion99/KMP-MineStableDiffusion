@@ -132,9 +132,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          #          - name: ios
-          #            task: ./gradlew buildReleaseIpa
-          #            path: composeApp/build/archives/release/*.ipa
+          - name: ios
+            task: ./gradlew buildReleaseIpa
+            path: composeApp/build/archives/release/*.ipa
           - name: android
             task: ./gradlew assembleRelease
             path: composeApp/build/outputs/apk/release/*.apk
