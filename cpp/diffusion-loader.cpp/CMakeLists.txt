@@ -223,6 +223,13 @@ target_link_libraries(sdloader
 # 编译优化
 # A-指定所需的 C 和 C++ 标准，确保代码能以正确的语言版本进行编译
 target_compile_features(sdloader PUBLIC c_std_11 cxx_std_17)
+
+# Hide symbols by default to avoid conflicts with JVM symbols (e.g. std::ctype)
+# This is crucial for Linux mainly, but good practice for macOS too.
+# Android handles this in its specific block below.
+if(UNIX AND NOT ANDROID)
+    target_compile_options(sdloader PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
+endif()
 # B-添加编译器标志。
 if(ANDROID)# 类似gradle的implementation,给sdloader库添加依赖 android,log(标准的Android NDK库),stable-diffusion
     # -fvisibility=hidden: 这是针对 Android/Linux 共享库的一项重要优化。

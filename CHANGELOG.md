@@ -4,10 +4,13 @@
 
 本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## v4.4.0
+
+- fix linux sdloader error
+
 ## v4.3.0
 
 - translation modify
-- 
 
 ## v4.2.1
 
