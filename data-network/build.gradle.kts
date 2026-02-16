@@ -40,6 +40,11 @@ kotlin {
                 api(libs.ktor.client.okhttp)
             }
         }
+        iosMain {
+            dependencies {
+                api(libs.ktor.client.darwin)
+            }
+        }
         desktopMain{
             dependencies {
                 api(libs.ktor.client.okhttp)
