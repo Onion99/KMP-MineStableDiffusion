@@ -69,7 +69,7 @@ Mine StableDiffusion supports a wide range of models. To help you choose the bes
 ### � Entry & Speed (Fastest, Minimal VRAM)
 _Ideal for older phones or integrated graphics. High speed, low memory usage._
 - ✅ **[SD-Turbo](https://huggingface.co/stabilityai/sd-turbo)** - Extremely fast 1-step generation
-- ✅ **SD1.x / SD2.x** - Classic Stable Diffusion models (Very efficient)
+- ✅ **[SD1.x / SD2.x](https://civitai.com/models)** - Classic Stable Diffusion models (Very efficient)
 - ✅ **🎨 [Chroma](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/chroma.md) / [Chroma1-Radiance](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/chroma_radiance.md)** - Vibrant color generation
 
 ### ⚖️ Balanced Performance (Standard Quality)
