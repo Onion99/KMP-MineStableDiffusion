@@ -27,7 +27,6 @@ cmake --build build-ios-device --config Release --target stable-diffusion
 mkdir -p libs/ios-device
 find build-ios-device -name "libstable-diffusion.a" -exec cp {} libs/ios-device/ \;
 find build-ios-device -name "libggml*.a" -exec cp {} libs/ios-device/ \;
-find build-ios-device -path "*/Release-iphoneos/libzip.a" -exec cp {} libs/ios-device/ \;
 
 # ==========================================
 # 2. Build for iOS Simulator (iphonesimulator)
@@ -88,7 +87,6 @@ merge_lib "libggml-base.a"
 merge_lib "libggml-cpu.a"
 merge_lib "libggml-blas.a"
 merge_lib "libggml-metal.a"
-merge_lib "libzip.a"
 
 echo "--------------------------------------------------------"
 echo "iOS build complete."

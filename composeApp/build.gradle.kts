@@ -45,7 +45,7 @@ kotlin {
                 "-framework", "MetalPerformanceShaders",
                 "-framework", "Foundation",
                 "-framework", "Accelerate",
-                "-lzip"
+                //"-lzip"
             )
             linkTaskProvider.configure { dependsOn("buildIosNativeLibs") }
         }
@@ -63,19 +63,19 @@ kotlin {
         iosTarget.compilations["main"].cinterops {
             val sdloader by creating {
                 defFile(nativeDefFile)
-                compilerOpts("-I${headersDir.absolutePath}")
+                //compilerOpts("-I${headersDir.absolutePath}")
                 includeDirs(headersDir)
-                extraOpts("-verbose")
+                //extraOpts("-verbose")
             }
         }
     }
     
     // Ensure cinterop depends on native build to avoid race conditions and ensure headers/libs are ready
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>().configureEach {
+    /*tasks.withType<org.jetbrains.kotlin.gradle.tasks.CInteropProcess>().configureEach {
         if (name.contains("SdloaderIos")) {
             dependsOn("buildIosNativeLibs")
         }
-    }
+    }*/
     
     jvm("desktop")
     
