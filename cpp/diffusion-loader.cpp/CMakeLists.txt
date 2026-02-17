@@ -202,7 +202,8 @@ else()
     #target_link_options(sdloader PRIVATE "-Wl,--gc-sections" "-Wl,--exclude-libs,ALL")
     target_link_options(sdloader PRIVATE -Wl,--gc-sections)
     if(UNIX AND NOT APPLE AND NOT ANDROID)
-        target_link_options(sdloader PRIVATE -static-libstdc++ -static-libgcc)
+        # Disable static linking to avoid ABI mismatch on Linux (e.g. Arch) causing std::ctype crash
+        # target_link_options(sdloader PRIVATE -static-libstdc++ -static-libgcc)
     endif()
 endif()
 # C-指定头文件 (.h, .hpp) 的搜索路径。为JNI库添加 stable-diffusion 的头文件搜索路径
