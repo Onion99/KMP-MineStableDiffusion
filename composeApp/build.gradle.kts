@@ -15,6 +15,9 @@ plugins {
     alias(libs.plugins.composeHotReload)
 }
 
+
+val headersDir = project.file("${rootProject.projectDir}/cpp/stable-diffusion.cpp")
+val nativeDefFile = project.file("src/nativeInterop/cinterop/sdloader.def")
 kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -59,11 +62,7 @@ kotlin {
         }
         iosTarget.compilations["main"].cinterops {
             val sdloader by creating {
-                val headersDir = project.file("${rootProject.projectDir}/cpp/stable-diffusion.cpp")
-                if (!headersDir.exists()) {
-                     println("WARNING: Headers dir not found at $headersDir")
-                }
-                defFile(project.file("src/nativeInterop/cinterop/sdloader.def"))
+                defFile(nativeDefFile)
                 compilerOpts("-I${headersDir.absolutePath}")
                 includeDirs(headersDir)
                 extraOpts("-verbose")
