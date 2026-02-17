@@ -8,7 +8,7 @@ _Generate stunning AI art locally on Android & Desktop_
 
 <p align="center">
   <a href="https://kotlinlang.org"><img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF.svg"/></a>
-  <a href="#"><img alt="Platforms" src="https://img.shields.io/badge/Platforms-Android%20%7C%20Desktop-brightgreen"/></a>
+  <a href="#"><img alt="Platforms" src="https://img.shields.io/badge/Platforms-Android%20%7C%20Ios%20%7C%20Desktop-brightgreen"/></a>
   <a href="https://github.com/Onion99/KMP-MineStableDiffusion/releases">
     <img alt="Release" src="https://img.shields.io/github/v/release/Onion99/KMP-MineStableDiffusion?label=Release&logo=github"/>
   </a>
@@ -173,8 +173,6 @@ The **Advanced Settings** page provides fine-grained control over the inference 
 
 <img src="./docs/setting_tip.webp" height="298" width="426"  alt="setting"/>
 
-> [!NOTE]
-> iOS support is under development and will be available in future releases
 
 ---
 
