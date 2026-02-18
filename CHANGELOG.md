@@ -4,6 +4,10 @@
 
 本项目遵循 [语义化版本](https://semver.org/spec/v2.0.0.html)。
 
+## v5.1.0
+
+- Fix: com/sun/security/auth/module/UnixSystem error on Linux
+
 ## v5.0.0
 
 - IOS support
