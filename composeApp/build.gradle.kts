@@ -214,6 +214,11 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.onion.diffusion"
             packageVersion = "1.0.0"
+            
+            // Fix: com/sun/security/auth/module/UnixSystem error on Linux
+            // This module is required for user/group checking but often stripped by jlink
+            modules("jdk.security.auth")
+
 
             targetFormats(
                 TargetFormat.Dmg,
