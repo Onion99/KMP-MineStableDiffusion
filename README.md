@@ -155,13 +155,13 @@ The **Advanced Settings** page provides fine-grained control over the inference 
 
 ## 📱 Platform Support
 
-| Platform | Status | Requirements |
-|----------|--------|--------------|
-| 🤖 Android | ✅ Supported | Android 11+ (API 30+) |
+| Platform | Status | Requirements                |
+|----------|--------|-----------------------------|
+| 🤖 Android | ✅ Supported | Android 11+ (API 30+) + with Vulkan 1.2      |
 | 🪟 Windows | ✅ Supported | Windows 10+ with Vulkan 1.2 |
-| 🐧 Linux | ✅ Supported | Vulkan 1.2+ drivers |
-| 🍎 macOS | ✅ Supported | Metal support required |
-| 📱 iOS | ✅ Supported | Metal support required |
+| 🐧 Linux | ✅ Supported | Vulkan 1.2+ drivers         |
+| 🍎 macOS | ✅ Supported | Metal support required      |
+| 📱 iOS | ✅ Supported | Metal support required      |
 
 > [!TIP]
 > **Memory Optimization**:

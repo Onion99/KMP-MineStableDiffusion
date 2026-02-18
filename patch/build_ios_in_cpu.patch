@@ -1,0 +1,28 @@
+Subject: [PATCH] build_ios_in_cpu
+---
+Index: cpp/build_ios.sh
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/cpp/build_ios.sh b/cpp/build_ios.sh
+--- a/cpp/build_ios.sh	(revision a25b026f5c8a47dccfde446f21653912d6c384ab)
++++ b/cpp/build_ios.sh	(date 1771379405100)
+@@ -41,7 +41,7 @@
+     -DCMAKE_OSX_SYSROOT=iphonesimulator \
+     -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+     -DCMAKE_OSX_ARCHITECTURES="arm64" \
+-    -DSD_METAL=ON \
++    -DSD_METAL=OFF \
+     -DSD_BUILD_SHARED_LIBS=OFF \
+     -DSD_BUILD_EXAMPLES=OFF \
+     -DCMAKE_C_FLAGS="-w" \
+@@ -56,7 +56,7 @@
+     -DCMAKE_OSX_SYSROOT=iphonesimulator \
+     -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+     -DCMAKE_OSX_ARCHITECTURES="x86_64" \
+-    -DSD_METAL=ON \
++    -DSD_METAL=OFF \
+     -DSD_BUILD_SHARED_LIBS=OFF \
+     -DSD_BUILD_EXAMPLES=OFF \
+     -DCMAKE_C_FLAGS="-w" \
