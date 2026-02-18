@@ -4,7 +4,7 @@
 # Mine StableDiffusion 🎨
 
 **The kotlin multiplatform Stable Diffusion client**  
-_Generate stunning AI art locally on Android & Desktop_
+_Generate stunning AI art locally on Your devices_
 
 <p align="center">
   <a href="https://kotlinlang.org"><img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-Multiplatform-7F52FF.svg"/></a>
