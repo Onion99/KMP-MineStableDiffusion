@@ -130,21 +130,6 @@ The **Advanced Settings** page provides fine-grained control over the inference 
 
 **Model Weight Type (wtype)** — Controls how model weights are stored in memory. Lower bit-depth reduces RAM usage but may degrade image quality.
 
-| Type | Precision | Approx. RAM | Notes |
-|------|-----------|-------------|-------|
-| Auto | — | — | Library selects optimal type automatically (**recommended**) |
-| F32 | Full 32-bit | ~8 GB | Best quality, highest memory |
-| F16 | Half 16-bit | ~4 GB | Minimal quality loss |
-| BF16 | Brain Float 16 | ~4 GB | Optimized for modern hardware |
-| Q8_0 | 8-bit | ~2 GB | Slight quality loss |
-| Q6_K | 6-bit K-variant | ~1.5 GB | Good quality/size balance |
-| Q5_K | 5-bit K-variant | ~1.3 GB | Better than Q5_0 |
-| Q5_0 | 5-bit legacy | ~1.2 GB | Noticeable quality loss |
-| Q4_K | 4-bit K-variant | ~1 GB | Better than Q4_0 |
-| Q4_0 | 4-bit legacy | ~1 GB | Quality compromise |
-| Q3_K | 3-bit K-variant | ~0.7 GB | Low memory mode |
-| Q2_K | 2-bit K-variant | ~0.5 GB | Extreme compression, significant quality loss |
-
 > [!TIP]
 > **K-variants** (Q6_K, Q5_K, Q4_K, Q3_K, Q2_K) offer better quality at the same bit-depth compared to their legacy counterparts. Most users should keep **Auto** and only change this if they have specific memory constraints.
 
@@ -173,6 +158,15 @@ The **Advanced Settings** page provides fine-grained control over the inference 
 
 <img src="./docs/setting_tip.webp" height="298" width="426"  alt="setting"/>
 
+
+---
+
+## 🎨 Community Showcase
+
+Created something amazing? We'd love to see it!
+Share your generation details (prompt, seed, model, etc.) to help others learn and create better art.
+
+[**👉 Submit your creation here**](https://github.com/Onion99/KMP-MineStableDiffusion/issues/new?template=image_generation_record.md)
 
 ---
 
