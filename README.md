@@ -89,9 +89,6 @@ _State-of-the-art models with massive parameter counts. Best for flagship phones
 - ✅ **[FLUX.1-schnell / dev](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/flux.md)** - Next-gen image quality
 - ✅ **[FLUX.2-dev](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/flux.md)** - Latest and most capable iteration
 
-> [!TIP]
-> For model-specific documentation, check the [docs](./docs) folder
-
 ---
 
 ## 🌟 Key Features
@@ -103,12 +100,6 @@ Generate stunning images from text descriptions with various models
 Input: "A serene mountain landscape at sunset, digital art"
 Output: High-quality AI-generated image
 ```
-
-### Custom Model Support
-- Load your own fine-tuned models
-- Support for GGUF format models
-- VAE and LoRA customization
-- Flexible model switching
 
 ### Advanced Controls
 - Customizable generation parameters (steps, CFG scale, sampler)
