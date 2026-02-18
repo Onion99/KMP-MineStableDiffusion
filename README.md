@@ -66,6 +66,9 @@ Mine StableDiffusion is a **native, offline-first AI art generation app** that b
 
 Mine StableDiffusion supports a wide range of models. To help you choose the best model for your device, we've organized them by performance requirements:
 
+> Please try to ensure that the model is smaller than the VRAM of your device.
+
+
 ### � Entry & Speed (Fastest, Minimal VRAM)
 _Ideal for older phones or integrated graphics. High speed, low memory usage._
 - ✅ **[SD-Turbo](https://huggingface.co/stabilityai/sd-turbo)** - Extremely fast 1-step generation
