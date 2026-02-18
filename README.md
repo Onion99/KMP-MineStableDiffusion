@@ -67,6 +67,9 @@ Mine StableDiffusion is a **native, offline-first AI art generation app** that b
 Mine StableDiffusion supports a wide range of models. To help you choose the best model for your device, we've organized them by performance requirements:
 
 > Please try to ensure that the model is smaller than the VRAM of your device.
+>
+> [!TIP]
+> **Start Small**: We recommend starting with smaller models (e.g., SD-Turbo, SD 1.5) and gradually trying larger ones. This allows you to gauge your device's capabilities and identify performance bottlenecks effectively.
 
 
 ### � Entry & Speed (Fastest, Minimal VRAM)
