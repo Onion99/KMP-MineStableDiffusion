@@ -83,7 +83,7 @@ _Good balance between quality and speed. Works well on most modern devices._
 - ✅ **[SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo)** - Fast high-quality 512x512 to 1024x1024 images
 - ✅ **🖼️ [Z-Image](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/z_image.md)** - Advanced image synthesis
   - Test:[Model](https://huggingface.co/leejet/Z-Image-Turbo-GGUF/blob/main/z_image_turbo-Q2_K.gguf)+[VAE](https://huggingface.co/black-forest-labs/FLUX.1-schnell/blob/main/ae.safetensors)+[LLM](https://huggingface.co/unsloth/Qwen3-4B-Instruct-2507-GGUF/blob/main/Qwen3-4B-Instruct-2507-Q2_K_L.gguf)
-  -  <img src="docs/model/zimage.webp"  alt="Android Demo1">
+  -  <img src="docs/model/zimage.webp" width="256"  alt="Android Demo1">
 - ✅ **🧠 [Qwen Image](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/qwen_image.md)** - Alibaba's multimodal model
 
 ### 💎 Professional Quality (High Requirements)
