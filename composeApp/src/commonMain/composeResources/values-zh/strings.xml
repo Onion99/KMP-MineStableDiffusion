@@ -67,4 +67,10 @@
     <string name="settings_enable_mmap_desc">使用内存映射方式加载模型，按需从磁盘读取权重。可显著降低加载时的内存峰值，但对磁盘读写速度有一定要求。</string>
     <string name="settings_conv_direct">直接卷积</string>
     <string name="settings_conv_direct_desc">使用直接卷积替代默认的 im2col 实现。实验性功能，部分硬件上可获得加速效果。</string>
+    <string name="settings_lora_title">LoRA 模型</string>
+    <string name="settings_lora_subtitle">添加并配置 LoRA 模型</string>
+    <string name="settings_lora_add">添加 LoRA</string>
+    <string name="settings_lora_strength">权重: %s</string>
+    <string name="settings_lora_remove">移除</string>
+    <string name="settings_lora_files">LoRA 文件 (*.safetensors)</string>
 </resources>
