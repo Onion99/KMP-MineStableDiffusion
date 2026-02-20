@@ -61,7 +61,6 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
     const char* t5xxlPath = jT5xxlPath ? env->GetStringUTFChars(jT5xxlPath, nullptr) : nullptr;
 
     printf("Initializing Stable Diffusion with:\n");
-    printf("  Model path: %s\n", modelPath ? modelPath : "none");
 
 
     // 创建并初始化参数结构体
@@ -73,8 +72,12 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeLoadModel(
         clipLPath && strlen(clipLPath) > 0 || clipGPath && strlen(clipGPath) > 0 || 
         t5xxlPath && strlen(t5xxlPath) > 0) {
         p.diffusion_model_path = modelPath ? modelPath : "";
+        printf("  Diffusion Model path: %s\n", modelPath ? modelPath : "none");
+
     } else {
         p.model_path = modelPath ? modelPath : "";
+        printf("  Model path: %s\n", modelPath ? modelPath : "none");
+
     }
     if (vaePath && strlen(vaePath) > 0) {
         p.vae_path = vaePath ? vaePath : "" ;
@@ -159,7 +162,8 @@ extern "C" JNIEXPORT jbyteArray JNICALL
 Java_org_onion_diffusion_native_DiffusionLoader_nativeTxt2Img(JNIEnv* env, jobject thiz, jlong handlePtr,
                                                               jstring jPrompt, jstring jNegative,
                                                               jint width, jint height,
-                                                              jint steps, jfloat cfg, jlong seed){
+                                                              jint steps, jfloat cfg, jlong seed,
+                                                              jobjectArray jLoraPaths, jfloatArray jLoraStrengths){
     (void)thiz;
     // 如果句柄是 0，说明初始化失败或从未初始化
     if (handlePtr == 0) {
@@ -172,6 +176,31 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeTxt2Img(JNIEnv* env, jobje
     // 将 JVM 的 jstring 转换为 C++ 可以使用的 const char* 字符串
     const char* prompt = jPrompt ? env->GetStringUTFChars(jPrompt, nullptr) : "";
     const char* negative = jNegative ? env->GetStringUTFChars(jNegative, nullptr) : "";
+
+    // LoRA Handling
+    std::vector<std::string> lora_path_store;
+    std::vector<sd_lora_t> lora_config_store;
+    if (jLoraPaths && jLoraStrengths) {
+        int count = env->GetArrayLength(jLoraPaths);
+        if (count > 0) {
+           lora_path_store.reserve(count);
+           lora_config_store.reserve(count);
+           jfloat* strengths = env->GetFloatArrayElements(jLoraStrengths, nullptr);
+           for(int i=0; i<count; i++) {
+               jstring jPath = (jstring)env->GetObjectArrayElement(jLoraPaths, i);
+               const char* cPath = env->GetStringUTFChars(jPath, nullptr);
+               lora_path_store.emplace_back(cPath);
+               env->ReleaseStringUTFChars(jPath, cPath);
+               env->DeleteLocalRef(jPath);
+               
+               sd_lora_t lora{};
+               lora.path = lora_path_store.back().c_str();
+               lora.multiplier = strengths[i];
+               lora_config_store.push_back(lora);
+           }
+           env->ReleaseFloatArrayElements(jLoraStrengths, strengths, JNI_ABORT);
+        }
+    }
 
     // 初始化采样参数结构体
     sd_sample_params_t sample{};
@@ -188,6 +217,8 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeTxt2Img(JNIEnv* env, jobje
     gen.sample_params = sample;
     gen.seed = seed;
     gen.batch_count = 1;
+    gen.loras = lora_config_store.data();
+    gen.lora_count = lora_config_store.size();
 
     // 生成图像,执行完毕后，它返回一个指向 sd_image_t 结构体的指针 out。这个结构体包含了生成图像的所有信息（宽度、高度、通道数，以及一个指向原始像素数据内存的指针 data
     sd_image_t* out = generate_image(handle->ctx, &gen);
@@ -273,7 +304,8 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeVideoGen(JNIEnv* env, jobj
                                                                jint width, jint height,
                                                                jint videoFrames, jint steps,
                                                                jfloat cfg, jlong seed,
-                                                               jint sampleMethod){
+                                                               jint sampleMethod,
+                                                               jobjectArray jLoraPaths, jfloatArray jLoraStrengths){
     (void)thiz;
     if (handlePtr == 0) {
         printf("StableDiffusion not initialized for video generation\n");
@@ -284,6 +316,31 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeVideoGen(JNIEnv* env, jobj
     const char* prompt = jPrompt ? env->GetStringUTFChars(jPrompt, nullptr) : "";
     const char* negative = jNegative ? env->GetStringUTFChars(jNegative, nullptr) : "";
 
+    // LoRA Handling
+    std::vector<std::string> lora_path_store;
+    std::vector<sd_lora_t> lora_config_store;
+    if (jLoraPaths && jLoraStrengths) {
+        int count = env->GetArrayLength(jLoraPaths);
+        if (count > 0) {
+           lora_path_store.reserve(count);
+           lora_config_store.reserve(count);
+           jfloat* strengths = env->GetFloatArrayElements(jLoraStrengths, nullptr);
+           for(int i=0; i<count; i++) {
+               jstring jPath = (jstring)env->GetObjectArrayElement(jLoraPaths, i);
+               const char* cPath = env->GetStringUTFChars(jPath, nullptr);
+               lora_path_store.emplace_back(cPath);
+               env->ReleaseStringUTFChars(jPath, cPath);
+               env->DeleteLocalRef(jPath);
+               
+               sd_lora_t lora{};
+               lora.path = lora_path_store.back().c_str();
+               lora.multiplier = strengths[i];
+               lora_config_store.push_back(lora);
+           }
+           env->ReleaseFloatArrayElements(jLoraStrengths, strengths, JNI_ABORT);
+        }
+    }
+
     // 初始化视频生成参数结构体
     sd_vid_gen_params_t gen{};
     sd_vid_gen_params_init(&gen);
@@ -293,6 +350,8 @@ Java_org_onion_diffusion_native_DiffusionLoader_nativeVideoGen(JNIEnv* env, jobj
     gen.height = height;
     gen.video_frames = videoFrames;
     gen.seed = seed;
+    gen.loras = lora_config_store.data();
+    gen.lora_count = lora_config_store.size();
 
     // 设置采样参数
     sd_sample_params_init(&gen.sample_params);

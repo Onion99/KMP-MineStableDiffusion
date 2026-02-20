@@ -93,7 +93,9 @@ actual class DiffusionLoader actual constructor() {
         height: Int,
         steps: Int,
         cfg: Float,
-        seed: Long
+        seed: Long,
+        loraPaths: Array<String>?,
+        loraStrengths: FloatArray?
     ): ByteArray? {
         val sdCtx = ctx ?: return null
 
@@ -111,6 +113,21 @@ actual class DiffusionLoader actual constructor() {
             genParams.height = height
             genParams.seed = seed
             genParams.batch_count = 1
+            
+            // LoRA Handling
+            val loraCStrs = mutableListOf<CValues<ByteVar>>()
+            if (loraPaths != null && loraStrengths != null && loraPaths.isNotEmpty()) {
+                val count = loraPaths.size
+                val loras = allocArray<sd_lora_t>(count)
+                for (i in 0 until count) {
+                    val cstr = loraPaths[i].cstr
+                    loraCStrs.add(cstr)
+                    loras[i].path = cstr.ptr
+                    loras[i].multiplier = loraStrengths[i]
+                }
+                genParams.loras = loras
+                genParams.lora_count = count.toUInt()
+            }
 
             val out = generate_image(sdCtx, genParams.ptr) ?: return null
             val image = out.pointed
@@ -119,8 +136,8 @@ actual class DiffusionLoader actual constructor() {
                 free(out)
                 return null
             }
-
-            // data mapped to uint8_t* in C, which is usually UByteVar in Kotlin/Native
+            
+            // ... (rest is unchanged)
             val pngData = encodeImageToPng(
                 image.data!!.reinterpret(), image.width.toInt(), image.height.toInt(), image.channel.toInt()
             )
@@ -140,7 +157,9 @@ actual class DiffusionLoader actual constructor() {
         steps: Int,
         cfg: Float,
         seed: Long,
-        sampleMethod: Int
+        sampleMethod: Int,
+        loraPaths: Array<String>?,
+        loraStrengths: FloatArray?
     ): List<ByteArray>? {
         val sdCtx = ctx ?: return null
 
@@ -154,6 +173,21 @@ actual class DiffusionLoader actual constructor() {
             genParams.height = height
             genParams.video_frames = videoFrames
             genParams.seed = seed
+
+            // LoRA Handling
+            val loraCStrs = mutableListOf<CValues<ByteVar>>()
+            if (loraPaths != null && loraStrengths != null && loraPaths.isNotEmpty()) {
+                val count = loraPaths.size
+                val loras = allocArray<sd_lora_t>(count)
+                for (i in 0 until count) {
+                    val cstr = loraPaths[i].cstr
+                    loraCStrs.add(cstr)
+                    loras[i].path = cstr.ptr
+                    loras[i].multiplier = loraStrengths[i]
+                }
+                genParams.loras = loras
+                genParams.lora_count = count.toUInt()
+            }
 
             // 初始化内嵌的采样参数
             sd_sample_params_init(genParams.sample_params.ptr)

@@ -27,9 +27,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Extension
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,9 +41,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,7 +87,15 @@ import minediffusion.composeapp.generated.resources.settings_steps_description
 import minediffusion.composeapp.generated.resources.settings_subtitle
 import minediffusion.composeapp.generated.resources.settings_title
 import minediffusion.composeapp.generated.resources.settings_width
+import minediffusion.composeapp.generated.resources.settings_lora_title
+import minediffusion.composeapp.generated.resources.settings_lora_subtitle
+import minediffusion.composeapp.generated.resources.settings_lora_add
+import minediffusion.composeapp.generated.resources.settings_lora_strength
+import minediffusion.composeapp.generated.resources.settings_lora_remove
+import minediffusion.composeapp.generated.resources.settings_lora_files
 import org.jetbrains.compose.resources.stringResource
+import kotlinx.coroutines.launch
+import com.onion.model.LoraConfig
 import org.koin.compose.koinInject
 import org.onion.diffusion.ui.navigation.route.MainRoute
 import org.onion.diffusion.ui.navigation.route.RootRoute
@@ -208,6 +224,12 @@ fun SettingScreen(
             }
             
             Spacer(modifier = Modifier.height(20.dp))
+            
+            // LoRA Management Section
+            LoraManagementSection(chatViewModel = chatViewModel)
+            
+            Spacer(modifier = Modifier.height(20.dp))
+
             
             // Current Settings Preview Card
             CurrentSettingsPreview(
@@ -627,6 +649,128 @@ private fun CurrentSettingsPreview(
                     text = "${width}×${height} • $steps steps • CFG ${((cfg * 10).roundToInt() / 10.0)}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoraManagementSection(
+    chatViewModel: ChatViewModel
+) {
+    val scope = rememberCoroutineScope()
+
+    SettingsSectionCard(
+        title = stringResource(Res.string.settings_lora_title),
+        subtitle = stringResource(Res.string.settings_lora_subtitle),
+        icon = Icons.Default.Extension
+    ) {
+        // List of added LoRAs
+        if (chatViewModel.loraList.isEmpty()) {
+            Text(
+                text = "No LoRA models added",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        } else {
+            chatViewModel.loraList.forEach { lora ->
+                LoraItemRow(
+                    loraConfig = lora,
+                    onRemove = { chatViewModel.removeLora(lora) }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+        }
+
+        // Add LoRA Button
+        Button(
+            onClick = {
+                scope.launch {
+                    val path = chatViewModel.selectLoraFile()
+                    if (path.isNotBlank()) {
+                        chatViewModel.addLora(path)
+                    }
+                }
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(stringResource(Res.string.settings_lora_add))
+        }
+    }
+}
+
+@Composable
+private fun LoraItemRow(
+    loraConfig: LoraConfig,
+    onRemove: () -> Unit
+) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = loraConfig.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = loraConfig.path,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1
+                    )
+                }
+                
+                Switch(
+                    checked = loraConfig.isEnabled,
+                    onCheckedChange = { loraConfig.isEnabled = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.primary,
+                        checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    modifier = Modifier.scale(0.8f)
+                )
+                
+                IconButton(onClick = onRemove, modifier = Modifier.size(24.dp)) {
+                    Icon(
+                        Icons.Default.Delete, 
+                        contentDescription = stringResource(Res.string.settings_lora_remove),
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+            
+            if (loraConfig.isEnabled) {
+                Spacer(modifier = Modifier.height(8.dp))
+                SliderSetting(
+                    label = stringResource(Res.string.settings_lora_strength).replace("%s", ""),
+                    value = loraConfig.strength,
+                    valueRange = 0f..2f,
+                    steps = 0,
+                    valueDisplay = ((loraConfig.strength * 10).roundToInt() / 10.0).toString(),
+                    description = "",
+                    onValueChange = { loraConfig.strength = it }
                 )
             }
         }

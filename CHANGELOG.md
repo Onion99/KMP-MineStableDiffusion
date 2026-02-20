@@ -10,6 +10,10 @@
 - **Image Metadata Injection**: 
   - Saved PNG images now automatically embed generation parameters (prompt, negative prompt, seed, steps, cfg, model, etc.) as `tEXt` chunks.
   - Seamlessly supported across all platforms (Android, Desktop, iOS).
+- **LoRA Support**:
+  - Load external LoRA models (`.safetensors`) to adjust image generation style and details.
+  - Added intuitive UI in settings for managing multiple LoRAs (enable/disable, adjust strength, remove).
+  - Fully integrated with the native generation pipeline across Android, Desktop, and iOS platforms.
 
 ## v5.1.0
 

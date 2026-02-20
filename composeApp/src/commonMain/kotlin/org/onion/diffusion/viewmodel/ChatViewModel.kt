@@ -6,6 +6,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.onion.model.ChatMessage
+import com.onion.model.LoraConfig
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -108,7 +109,28 @@ class ChatViewModel  : ViewModel() {
     /** Flow Shift - controls temporal flow for video generation models (e.g. Wan2.1) */
     var flowShift = mutableStateOf(3.0f)
 
+    // ========================================================================================
+    //                              LoRA Settings
+    // ========================================================================================
+    val loraList = mutableStateListOf<LoraConfig>()
 
+    fun addLora(path: String) {
+        // Prevent duplicates
+        if (loraList.any { it.path == path }) return
+        
+        // Extract filename for name
+        val name = path.substringAfterLast('/').substringAfterLast('\\')
+        loraList.add(LoraConfig(path = path, name = name))
+    }
+
+    fun removeLora(lora: LoraConfig) {
+        loraList.remove(lora)
+    }
+
+
+    suspend fun selectLoraFile(): String {
+        return diffusionLoader.getModelFilePath()
+    }
 
     suspend fun selectDiffusionModelFile(): String{
         isDiffusionModelLoading.value = true
@@ -212,6 +234,11 @@ class ChatViewModel  : ViewModel() {
                     println("Image negative: $negativeContent")
                     // Call txt2Img to generate image from the query prompt
                     val startTime = Clock.System.now().toEpochMilliseconds()
+
+                    val enabledLoras = loraList.filter { it.isEnabled }
+                    val loraPaths = enabledLoras.map { it.path }.toTypedArray()
+                    val loraStrengths = enabledLoras.map { it.strength }.toFloatArray()
+
                     val imageByteArray = diffusionLoader.txt2Img(
                         prompt = promptContent,
                         negative = negativeContent,
@@ -220,7 +247,9 @@ class ChatViewModel  : ViewModel() {
                         height = imageHeight.value,
                         steps = generationSteps.value,//模型渲染细节的 “迭代次数”，步数越多细节越丰富，但耗时越长（20-30 步性价比最高）
                         cfg = cfgScale.value,// 控制模型 “遵守正向提示词” 的严格程度，数值越高越贴合提示词，越低越自由发挥（7.0-9.0 最常用）
-                        seed = Clock.System.now().toEpochMilliseconds()
+                        seed = Clock.System.now().toEpochMilliseconds(),
+                        loraPaths = loraPaths,
+                        loraStrengths = loraStrengths
                     )
 
                     // Debug logging to verify image format
@@ -295,6 +324,11 @@ class ChatViewModel  : ViewModel() {
                     println("Video frames: ${videoFrames.value}")
                     // Call videoGen to generate video frames
                     val startTime = Clock.System.now().toEpochMilliseconds()
+                    
+                    val enabledLoras = loraList.filter { it.isEnabled }
+                    val loraPaths = enabledLoras.map { it.path }.toTypedArray()
+                    val loraStrengths = enabledLoras.map { it.strength }.toFloatArray()
+                    
                     val frames = diffusionLoader.videoGen(
                         prompt = promptContent,
                         negative = negativeContent,
@@ -304,7 +338,9 @@ class ChatViewModel  : ViewModel() {
                         steps = generationSteps.value,
                         cfg = cfgScale.value,
                         seed = Clock.System.now().toEpochMilliseconds(),
-                        sampleMethod = 0 // EULER_SAMPLE_METHOD
+                        sampleMethod = 0, // EULER_SAMPLE_METHOD
+                        loraPaths = loraPaths,
+                        loraStrengths = loraStrengths
                     )
 
                     println("=== Video Generation Debug ===")

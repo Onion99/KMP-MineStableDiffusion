@@ -68,4 +68,10 @@
     <string name="settings_enable_mmap_desc">Memory-map the model weights instead of loading them into RAM. Reduces initial RAM usage but may increase disk I/O.</string>
     <string name="settings_conv_direct">Direct Convolution</string>
     <string name="settings_conv_direct_desc">Enable direct convolution optimization in the diffusion model. Experimental performance boost on some hardware.</string>
+    <string name="settings_lora_title">LoRA Models</string>
+    <string name="settings_lora_subtitle">Add and configure LoRA models</string>
+    <string name="settings_lora_add">Add LoRA</string>
+    <string name="settings_lora_strength">Strength: %s</string>
+    <string name="settings_lora_remove">Remove</string>
+    <string name="settings_lora_files">LoRA Files (*.safetensors)</string>
 </resources>

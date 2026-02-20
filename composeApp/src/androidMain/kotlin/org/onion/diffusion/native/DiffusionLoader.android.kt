@@ -84,8 +84,10 @@ actual class DiffusionLoader actual constructor() {
         height: Int,
         steps: Int,
         cfg: Float,
-        seed: Long
-    ): ByteArray? = nativeTxt2Img(nativePtr,prompt,negative,width,height,steps,cfg,seed)
+        seed: Long,
+        loraPaths: Array<String>?,
+        loraStrengths: FloatArray?
+    ): ByteArray? = nativeTxt2Img(nativePtr,prompt,negative,width,height,steps,cfg,seed,loraPaths,loraStrengths)
 
     actual fun videoGen(
         prompt: String,
@@ -96,9 +98,11 @@ actual class DiffusionLoader actual constructor() {
         steps: Int,
         cfg: Float,
         seed: Long,
-        sampleMethod: Int
+        sampleMethod: Int,
+        loraPaths: Array<String>?,
+        loraStrengths: FloatArray?
     ): List<ByteArray>? {
-        val result = nativeVideoGen(nativePtr, prompt, negative, width, height, videoFrames, steps, cfg, seed, sampleMethod)
+        val result = nativeVideoGen(nativePtr, prompt, negative, width, height, videoFrames, steps, cfg, seed, sampleMethod, loraPaths, loraStrengths)
         return result?.toList()
     }
 
@@ -142,7 +146,9 @@ actual class DiffusionLoader actual constructor() {
         height: Int,
         steps: Int,
         cfg: Float,
-        seed: Long
+        seed: Long,
+        loraPaths: Array<String>? = null,
+        loraStrengths: FloatArray? = null
     ): ByteArray?
 
     private external fun nativeVideoGen(
@@ -155,7 +161,9 @@ actual class DiffusionLoader actual constructor() {
         steps: Int,
         cfg: Float,
         seed: Long,
-        sampleMethod: Int
+        sampleMethod: Int,
+        loraPaths: Array<String>? = null,
+        loraStrengths: FloatArray? = null
     ): Array<ByteArray>?
 
     private external fun nativeRelease(handle: Long)

@@ -22,6 +22,8 @@ expect class DiffusionLoader(){
         prompt: String, negative: String,
         width: Int, height: Int,
         steps: Int, cfg: Float, seed: Long,
+        loraPaths: Array<String>? = null,
+        loraStrengths: FloatArray? = null
     ): ByteArray?
 
     fun videoGen(
@@ -29,7 +31,9 @@ expect class DiffusionLoader(){
         width: Int, height: Int,
         videoFrames: Int, steps: Int,
         cfg: Float, seed: Long,
-        sampleMethod: Int
+        sampleMethod: Int,
+        loraPaths: Array<String>? = null,
+        loraStrengths: FloatArray? = null
     ): List<ByteArray>?
 
     fun release()
