@@ -106,10 +106,7 @@ actual class DiffusionLoader actual constructor() {
             // 初始化内嵌的采样参数
             sd_sample_params_init(genParams.sample_params.ptr)
             if (steps > 0) genParams.sample_params.sample_steps = steps
-            genParams.sample_params.guidance.txt_cfg = if (cfg > 0f) cfg else 7.0f
-            if (sampleMethod >= 0) {
-                genParams.sample_params.sample_method = sampleMethod.toUInt()
-            }
+            genParams.sample_params.guidance.txt_cfg = if (cfg > 0) cfg else 7.0f
 
             genParams.prompt = prompt.cstr.ptr
             genParams.negative_prompt = negative.cstr.ptr
@@ -117,21 +114,6 @@ actual class DiffusionLoader actual constructor() {
             genParams.height = height
             genParams.seed = seed
             genParams.batch_count = 1
-
-            // LoRA Handling
-            val loraCStrs = mutableListOf<CValues<ByteVar>>()
-            if (loraPaths != null && loraStrengths != null && loraPaths.isNotEmpty()) {
-                val count = loraPaths.size
-                val loras = allocArray<sd_lora_t>(count)
-                for (i in 0 until count) {
-                    val cstr = loraPaths[i].cstr
-                    loraCStrs.add(cstr)
-                    loras[i].path = cstr.ptr
-                    loras[i].multiplier = loraStrengths[i]
-                }
-                genParams.loras = loras
-                genParams.lora_count = count.toUInt()
-            }
 
             val out = generate_image(sdCtx, genParams.ptr) ?: return null
             val image = out.pointed
