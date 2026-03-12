@@ -141,7 +141,7 @@ actual class DiffusionLoader actual constructor() {
                 return null
             }
 
-            // ... (rest is unchanged)
+            // data mapped to uint8_t* in C, which is usually UByteVar in Kotlin/Native
             val pngData = encodeImageToPng(
                 image.data!!.reinterpret(), image.width.toInt(), image.height.toInt(), image.channel.toInt()
             )
@@ -177,21 +177,6 @@ actual class DiffusionLoader actual constructor() {
             genParams.height = height
             genParams.video_frames = videoFrames
             genParams.seed = seed
-
-            // LoRA Handling
-            val loraCStrs = mutableListOf<CValues<ByteVar>>()
-            if (loraPaths != null && loraStrengths != null && loraPaths.isNotEmpty()) {
-                val count = loraPaths.size
-                val loras = allocArray<sd_lora_t>(count)
-                for (i in 0 until count) {
-                    val cstr = loraPaths[i].cstr
-                    loraCStrs.add(cstr)
-                    loras[i].path = cstr.ptr
-                    loras[i].multiplier = loraStrengths[i]
-                }
-                genParams.loras = loras
-                genParams.lora_count = count.toUInt()
-            }
 
             // 初始化内嵌的采样参数
             sd_sample_params_init(genParams.sample_params.ptr)

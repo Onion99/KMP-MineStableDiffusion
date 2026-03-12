@@ -94,7 +94,6 @@ actual class DiffusionLoader actual constructor() {
         steps: Int,
         cfg: Float,
         seed: Long,
-        sampleMethod: Int,
         loraPaths: Array<String>?,
         loraStrengths: FloatArray?
     ): ByteArray? {
@@ -106,10 +105,7 @@ actual class DiffusionLoader actual constructor() {
             // 初始化内嵌的采样参数
             sd_sample_params_init(genParams.sample_params.ptr)
             if (steps > 0) genParams.sample_params.sample_steps = steps
-            genParams.sample_params.guidance.txt_cfg = if (cfg > 0f) cfg else 7.0f
-            if (sampleMethod >= 0) {
-                genParams.sample_params.sample_method = sampleMethod.toUInt()
-            }
+            genParams.sample_params.guidance.txt_cfg = if (cfg > 0) cfg else 7.0f
 
             genParams.prompt = prompt.cstr.ptr
             genParams.negative_prompt = negative.cstr.ptr
