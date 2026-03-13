@@ -105,25 +105,21 @@ _Best for high-detail 1024x1024+ generation. Requires more VRAM and time._
 
 ---
 
-### ⚙️ Advanced Settings Guide
+## 🛠 Advanced Controls Deep Dive
 
-The **Advanced Settings** page provides fine-grained control over the inference engine. Below is a summary of each toggle and its impact:
 
-| Setting | Description | Effect When ON | Effect When OFF | Recommendation |
-|---------|-------------|----------------|-----------------|----------------|
-| **Offload to CPU** | Offloads model computations from GPU to CPU | Saves GPU/VRAM at the cost of slower generation speed. | All computation stays on GPU (faster but needs more VRAM). | Enable on low-VRAM devices. |
-| **Keep CLIP on CPU** | Forces the CLIP text encoder to stay on CPU | Frees GPU memory for image generation; slightly slower prompt encoding. | CLIP runs on GPU (faster but uses more VRAM). | ✅ Enabled by default on **macOS** to prevent potential crashes. |
-| **Keep VAE on CPU** | Forces the VAE decoder to stay on CPU | Frees GPU memory; decoding step is slower. | VAE runs on GPU (faster final decode). | Enable if you encounter OOM errors during decode. |
-| **Enable MMAP** | Memory-maps model weights from disk instead of loading them entirely into RAM | Lower initial RAM spike; the OS pages weights in on demand (more disk I/O). | Entire model is loaded into RAM upfront (higher peak RAM, lower disk I/O). |  Disable if you experience slow generation on devices with slow storage. |
-| **Direct Convolution** | Uses a direct convolution implementation in the diffusion model | Experimental performance boost on some hardware. | Standard im2col-based convolution is used. | Try enabling to see if it improves speed on your device; disable if quality degrades. |
+| Tuning Parameter | What it does | Pro Tip |
+|------------------|--------------|---------|
+| **Quantization (wtype)** | Formats weights to limit RAM footprint (F16, Q8_0, Q4_K).<br>*(Note: Not applicable for pre-quantized `.gguf` files)* | _Leave on `Auto` unless explicitly tuning for low VRAM targets._ |
+| **Offload to CPU** | Offloads model computations from GPU to CPU. | Enable if you encounter OOM errors while loading the model. |
+| **Keep CLIP on CPU** | Forces the CLIP text encoder to stay on CPU. | Enable if you experience crashes during image generation. |
+| **Keep VAE on CPU** | Forces the VAE decoder to stay on CPU. | Enable if you encounter OOM errors during decode. |
 
-**Model Weight Type (wtype)** — Controls how model weights are stored in memory. Lower bit-depth reduces RAM usage but may degrade image quality.
-
-> [!TIP]
-> **K-variants** (Q6_K, Q5_K, Q4_K, Q3_K, Q2_K) offer better quality at the same bit-depth compared to their legacy counterparts. Most users should keep **Auto** and only change this if they have specific memory constraints.
-
-> [!WARNING]
-> Changing the weight type requires re-loading the model, which can take a long time. Only change this setting if you understand the trade-offs.
+<br>
+<div align="center">
+  <img src="./docs/setting_tip.webp" height="250" style="border-radius:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" alt="Memory Setting Example"/>
+</div>
+<br>
 
 ---
 
