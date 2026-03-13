@@ -32,59 +32,65 @@ _Generate stunning AI art locally on Your devices_
 
 ## ✨ What is Mine StableDiffusion?
 
-Mine StableDiffusion is a **native, offline-first AI art generation app** that brings the power of Stable Diffusion models to your fingertips. Built with modern Kotlin Multiplatform technology and powered by the blazing-fast [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) engine, it delivers desktop-class performance on both Android/iOS and Desktop platforms.
+Mine StableDiffusion is a **native, offline-first AI art generation studio** resting right in your pocket or on your desk. Built entirely on modern Kotlin Multiplatform and powered by the blazing-fast [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) engine, it delivers desktop-class inference capabilities across Android, iOS, and Desktop platforms.
 
-### 🎯 Why Choose This App?
+### 🎯 The Edge
 
-- **🚀 Native Performance** - C++ backend with JNI bindings for maximum speed
-- **🔒 Privacy First** - 100% offline, all processing happens on your device
-- **🎨 Modern UI** - Beautiful Compose Multiplatform interface
-- **📱 True Multiplatform** - Shared codebase for Android & iOS & Desktop
-- **🔧 Model Flexibility** - Support for FLUX, SDXL, SD3, and many more
-- **⚡ Hardware Accelerated** - Vulkan 1.2+ (Android/Linux/Windows) & Metal (macOS/iOS)
-- **🧩 Extensions & Plugins** - Full support for external LoRA models (`.safetensors`) offering stylized output
-- **🛠  Power Features** - Batch Image Generation, Flash Attention, Multi-step Samplers, Direct Convolution
-- **🏷️ Embedded Metadata** - Automatically saves generation parameters (prompts, seeds, dimensions, models, loras) directly into exported PNGs
+- 🚀 **Native Performance** — Pure C++ backend combined with JNI bindings ensures maximum hardware utilization.
+- 🔒 **100% Privacy** — Everything runs offline. No cloud, no subscriptions, no data harvesting.
+- 📱 **True Multiplatform** — A unified, beautiful Compose Multiplatform UX natively adapted for Mobile & Desktop.
+- � **Pro-Level Controls** — Granular control over VRAM (Flash Attention, CPU Offloading, Direct Convolution).
+- 🧩 **Endless Expansion** — Out-of-the-box support for external `.safetensors` LoRAs, advanced Samplers, and metadata injection.
 
 ---
 
-## 📸 Screenshots
+## 📸 See It In Action
 
-<div align="center">
+### 📱 **Mobile Experience** (Android / iOS)
+| App Settings | Generating View | Output Gallery |
+|:---:|:---:|:---:|
+| <img src="docs/android_setting_page.gif" height="400" style="border-radius:8px;"> | <img src="docs/android_img.webp" height="400" style="border-radius:8px;"> | <img src="docs/android_setting.webp" height="400" style="border-radius:8px;"> |
 
-|                                🤖 Android-1                                |                                                   Android-2                                                   |                                     Android-3                                      |
-|:--------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|
-| <img src="docs/android_setting_page.gif" height="450" alt="Android Demo1"> | <img src="docs/android_img.webp" height="450" alt="Android Demo2"> | <img src="docs/android_setting.webp" height="450" alt="Android Demo3"> | 
-
-
-|                 💻 Desktop-1                  |                 💻 Desktop-2                  | Desktop-mac                             |
-|:---------------------------------------------:|:---------------------------------------------:|-----------------------------------------|
-| ![Desktop Demo](docs/desktop_screenshot4.gif) | ![Desktop Demo2](docs/desktop_screenshot.gif) | ![Desktop Demo3](docs/desktop_mac.webp) | 
-
-</div>
+### 💻 **Desktop Experience** (Windows / macOS / Linux)
+| Fluid UI | Creative Workflows | macOS Native |
+|:---:|:---:|:---:|
+| <img src="docs/desktop_screenshot4.gif" width="280" style="border-radius:8px;"> | <img src="docs/desktop_screenshot.gif" width="280" style="border-radius:8px;"> | <img src="docs/desktop_mac.webp" width="280" style="border-radius:8px;"> |
 
 ---
 
-## 🎲 Supported Models & Performance Tiers
+## 🔥 Highlighted Features
 
-Mine StableDiffusion supports a wide range of models. To help you choose the best model for your device, we've organized them by performance requirements:
+### 🖼️ Batch / Text-to-Image Generation
+Never generate just one idea again. **Batch Generation** synchronously crafts up to 10 iterations of your prompt with beautiful inline progress tracking right in your chat flow.
 
-> Please try to ensure that the model is smaller than the VRAM of your device.
->
+### 🎭 Infinite Styles via LoRA
+Drag-and-drop support for `.safetensors` LoRA extensions. Mix multiple LoRAs simultaneously with precision weight sliders built right into the UI.
+
+### 🎛️ Transparent Sampling & Prompting
+Master the machine. Switch Sampler algorithms on the fly (Euler a, DPM++ 2M, LCM, TCD, etc.) to discover exactly how they mutate your art.
+
+### 🏷️ Self-Documenting Art
+Exported PNGs automatically embed all generation parameters (Prompt, Seed, Model, Sampler, CFG, LoRAs). Just drop the image back into any SD tool, and your exact setup is retrieved.
+
+---
+
+## 🎲 Model Support & Tiers
+
+We cover bleeding-edge architectures. Ensure the models you pick fit within your device's VRAM limits:
+
 > [!TIP]
-> **Start Small**: We recommend starting with smaller models (e.g., SD-Turbo, SD 1.5) and gradually trying larger ones. This allows you to gauge your device's capabilities and identify performance bottlenecks effectively.
-
+> **Start Small**: We highly recommend testing the waters with **SD-Turbo** or **SD 1.5** models to gauge your device's capabilities before moving to demanding architectures like FLUX.
 
 ### ⚖️ Entry & Speed (Fastest, Minimal VRAM)
 _Ideal for older phones or integrated graphics. High speed, low memory usage._
 - ✅ **[SD-Turbo](https://huggingface.co/stabilityai/sd-turbo)** - Extremely fast 1-step generation
 - ✅ **[SD1.x / SD2.x/Illustrious](https://civitai.com/models)**
-- ✅ **[SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo)** - Fast high 512x512 
+- ✅ **[SDXL-Turbo](https://huggingface.co/stabilityai/sdxl-turbo)** - Fast high 512x512
     - Test:[Model](https://huggingface.co/stabilityai/sdxl-turbo/blob/main/sd_xl_turbo_1.0_fp16.safetensors)
     -  <img src="docs/model/sdxl.webp" width="256"  alt="sdxl">
 - ✅ **🖼️ [Z-Image](https://github.com/leejet/stable-diffusion.cpp/blob/master/docs/z_image.md)** - Advanced image synthesis
-  - Test:[Model](https://huggingface.co/leejet/Z-Image-Turbo-GGUF/blob/main/z_image_turbo-Q2_K.gguf)+[VAE](https://huggingface.co/black-forest-labs/FLUX.1-schnell/blob/main/ae.safetensors)+[LLM](https://huggingface.co/unsloth/Qwen3-4B-Instruct-2507-GGUF/blob/main/Qwen3-4B-Instruct-2507-Q2_K_L.gguf)
-  -  <img src="docs/model/zimage.webp" width="256"  alt="zimage">
+    - Test:[Model](https://huggingface.co/leejet/Z-Image-Turbo-GGUF/blob/main/z_image_turbo-Q2_K.gguf)+[VAE](https://huggingface.co/black-forest-labs/FLUX.1-schnell/blob/main/ae.safetensors)+[LLM](https://huggingface.co/unsloth/Qwen3-4B-Instruct-2507-GGUF/blob/main/Qwen3-4B-Instruct-2507-Q2_K_L.gguf)
+    -  <img src="docs/model/zimage.webp" width="256"  alt="zimage">
 
 ### 💎 Professional Quality (High Requirements)
 _Best for high-detail 1024x1024+ generation. Requires more VRAM and time._
@@ -99,118 +105,62 @@ _Best for high-detail 1024x1024+ generation. Requires more VRAM and time._
 
 ---
 
-## 🌟 Key Features
+## 🛠 Advanced Controls Deep Dive
 
-### Text-to-Image / Batch Generation
-Generate single or multiple stunning images from text descriptions with various models synchronously.
+For power users, our settings menu opens up the entire `stable-diffusion.cpp` engine.
 
-```
-Input: "A serene mountain landscape at sunset, digital art"
-Output: High-quality AI-generated image(s) with progress indicator
-```
+| Tuning Parameter | What it does | Pro Tip |
+|------------------|--------------|---------|
+| **Quantization (wtype)** | Formats weights to limit RAM footprint (F16, Q8_0, Q4_K). | _Leave on `Auto` unless explicitly tuning for low VRAM targets._ |
+| **Flash Attention** | Memory-optimized attention tracking logic. | _Enable immediately on devices with `< 8GB RAM` for huge memory savings._ |
+| **CPU Offloading** | Manually unloads layers (like CLIP or VAE) out of VRAM. | _If you hit `Out of Memory` decoding the final image, enable `Keep VAE on CPU`._ |
+| **Memory Mapping (MMAP)** | Maps weights directly from storage rather than bulk loading RAM. | _Enabled on Android by default. Disable on Desktop if you have slow HDDs._ |
 
-### 🧩 LoRA Integration
-Effortlessly stylize generations by utilizing multiple `.safetensors` LoRA files with completely customizable strength dials directly from the sleek UI settings.
-
-### 📊 Transparent Sampler Algorithms
-Choose the perfect algorithm for your workflow directly on device (e.g. Euler, Euler a, DPM++ 2M, DDIM, LCM, TCD, and more) to master the noise-canceling mechanics.
-
-### ⚙️ Advanced Settings Guide
-
-The **Advanced Settings** page provides fine-grained control over the inference engine. Below is a summary of each toggle and its impact:
-
-| Setting | Description | Effect When ON | Effect When OFF | Recommendation |
-|---------|-------------|----------------|-----------------|----------------|
-| **Offload to CPU** | Offloads model computations from GPU to CPU | Saves GPU/VRAM at the cost of slower generation speed. | All computation stays on GPU (faster but needs more VRAM). | Enable on low-VRAM devices. |
-| **Keep CLIP on CPU** | Forces the CLIP text encoder to stay on CPU | Frees GPU memory for image generation; slightly slower prompt encoding. | CLIP runs on GPU (faster but uses more VRAM). | ✅ Enabled by default on **macOS** to prevent potential crashes. |
-| **Keep VAE on CPU** | Forces the VAE decoder to stay on CPU | Frees GPU memory; decoding step is slower. | VAE runs on GPU (faster final decode). | Enable if you encounter OOM errors during decode. |
-| **Enable MMAP** | Memory-maps model weights from disk instead of loading them entirely into RAM | Lower initial RAM spike; the OS pages weights in on demand (more disk I/O). | Entire model is loaded into RAM upfront (higher peak RAM, lower disk I/O). |  Disable if you experience slow generation on devices with slow storage. |
-| **Direct Convolution** | Uses a direct convolution implementation in the diffusion model | Experimental performance boost on some hardware. | Standard im2col-based convolution is used. | Try enabling to see if it improves speed on your device; disable if quality degrades. |
-
-**Model Weight Type (wtype)** — Controls how model weights are stored in memory. Lower bit-depth reduces RAM usage but may degrade image quality.
-
-> [!TIP]
-> **K-variants** (Q6_K, Q5_K, Q4_K, Q3_K, Q2_K) offer better quality at the same bit-depth compared to their legacy counterparts. Most users should keep **Auto** and only change this if they have specific memory constraints.
-
-> [!WARNING]
-> Changing the weight type requires re-loading the model, which can take a long time. Only change this setting if you understand the trade-offs.
+<br>
+<div align="center">
+  <img src="./docs/setting_tip.webp" height="250" style="border-radius:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" alt="Memory Setting Example"/>
+</div>
+<br>
 
 ---
 
-## 📱 Platform Support
+## � Platform Compatibility
 
-| Platform | Status | Requirements                |
-|----------|--------|-----------------------------|
-| 🤖 Android | ✅ Supported | Android 11+ (API 30+) + with Vulkan 1.2      |
-| 🪟 Windows | ✅ Supported | Windows 10+ with Vulkan 1.2 |
-| 🐧 Linux | ✅ Supported | Vulkan 1.2+ drivers         |
-| 🍎 macOS | ✅ Supported | Metal support required      |
-| 📱 iOS | ✅ Supported | Metal support required      |
-
-> [!TIP]
-> **Memory Optimization**:
-> - **Android**: **Mmap** is enabled by default. You can manually disable it in Settings if you encounter any issues.
-> - **macOS**: **CLIP on CPU** is enabled by default to prevent potential crashes during generation.
->
-> [!NOTE]
-> **Vulkan Performance**: Vulkan is currently used as a general-purpose acceleration backend. While it ensures broad compatibility, generation speeds may not be fully optimized compared to native implementations.
-
-<img src="./docs/setting_tip.webp" height="298" width="426"  alt="setting"/>
-
+| OS | Status | Hardware Requirement |
+|:---|:---:|:---|
+| 🤖 **Android** | ✅ Stable | Android 11+ (API 30+) running **Vulkan 1.2+** |
+| 🪟 **Windows** | ✅ Stable | Windows 10+ running **Vulkan 1.2+** |
+| 🐧 **Linux** | ✅ Stable | Standard modern **Vulkan 1.2+** drivers |
+| 🍎 **macOS** | ✅ Stable |  Silicon or Intel with **Metal** Support |
+| 📱 **iOS** | ✅ Beta   | A13 Bionic or newer, **Metal** Support |
 
 ---
 
-## 🎨 Community Showcase
+## �️ Architecture
 
-Created something amazing? We'd love to see it!
-Share your generation details (prompt, seed, model, etc.) to help others learn and create better art.
-
-[**👉 Submit your creation here**](https://github.com/Onion99/KMP-MineStableDiffusion/issues/13)
-
----
-
-## 🏗️ Architecture & Tech Stack
-
-### Core Technologies
+Under the hood, Mine StableDiffusion relies on zero compromises:
 
 ```mermaid
 graph TB
-    A[Compose Multiplatform UI] --> B[Kotlin ViewModels]
-    B --> C[Koin DI]
+    A[Compose Multiplatform UI] --> B[Cross-Platform ViewModels]
+    B --> C[Koin Dependency Injection]
     C --> D[JNI Bridge]
-    D --> E[C++ Native Layer]
-    E --> F[stable-diffusion.cpp]
-    F --> G[Vulkan/Metal Backend]
+    D --> E[C++ Native Optimization Layer]
+    E --> F[stable-diffusion.cpp / llama.cpp]
+    F --> G[Vulkan / Metal Hardware Acceleration]
 ```
-
-### Technology Stack
-- **Language**: Kotlin Multiplatform
-- **UI Framework**: Compose Multiplatform
-- **Dependency Injection**: Koin v4.1.1
-- **Navigation**: Jetpack Navigation Compose
-- **Networking**: Ktor 3.2.3 + Sandwich 2.1.2
-- **Image Loading**: Coil3 v3.3.0
-- **Concurrency**: Kotlin Coroutines
-- **Native Engine**: [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp)
-- **Native Engine ++**: [llama.cpp](https://github.com/ggerganov/llama.cpp)
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Get Started Now
 
-### Prerequisites
-- **Android**: Android 11+ device with Vulkan 1.2 support
-- **Desktop**: Windows/Linux/macOS with compatible graphics drivers
-- **Development**: Android Studio Ladybug or later / IntelliJ IDEA
+### Option 1: Quick Install (Recommended)
+1. Head over to our [Releases Page](https://github.com/Onion99/KMP-MineStableDiffusion/releases).
+2. Download the package crafted for your OS (`.apk`, `.dmg`, `.exe`).
+3. Simply launch it, point it to a model (`.gguf` or `.safetensors`), and begin typing your prompt!
 
-### Installation
-
-#### Option 1: Download Pre-built Release
-1. Visit [Releases](https://github.com/Onion99/KMP-MineStableDiffusion/releases)
-2. Download the appropriate package for your platform
-3. Install and launch
-
-#### Option 2: Build from Source
+### Option 2: Build From Source
+Got Android Studio or IntelliJ IDEA?
 ```bash
 # Clone the repository
 git clone https://github.com/Onion99/KMP-MineStableDiffusion.git
@@ -223,64 +173,22 @@ cd KMP-MineStableDiffusion
 ./gradlew :composeApp:assembleDebug
 ```
 
-### First Run
-1. Launch the app
-2. Load your Stable Diffusion model (GGUF format)
-3. Enter your text prompt
-4. Click generate and watch the magic happen! ✨
+---
+
+## 📚 Resources & Community
+
+- 📑 **[Read the Changelog](./CHANGELOG.md)** — Track what's new.
+- 🎨 **[Community Showcase](https://github.com/Onion99/KMP-MineStableDiffusion/issues/13)** — Show off your amazing generations or fetch prompts from others!
+
+### ❤️ Acknowledgements
+We stand on the shoulders of giants:
+- The masterful [leejet/stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp)
+- The trailblazing [ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp)
+- The incredible [JetBrains Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) team.
 
 ---
 
-## 📚 Documentation
-
-
-- 📝 [Changelog](./CHANGELOG.md) - Version history
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Whether it's:
-- 🐛 Bug reports
-- 💡 Feature requests
-- 📝 Documentation improvements
-- 🔧 Code contributions
-
-Please read our [Contributing Guidelines](./CONTRIBUTING.md) before submitting PRs.
-
----
-
-## 📄 License
-
-This project is licensed under the **GPL 3.0** - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-Special thanks to:
-- [leejet/stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) - Awesome C++ SD implementation
-- [ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp) - LLM inference framework
-- [JetBrains Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) - UI framework
-- The entire Stable Diffusion community 💜
-
----
-
-## 💙 Support This Project
-
-If you find this project useful:
-- ⭐ Star this repository
-- 🐛 Report bugs and suggest features
-- 🔀 Fork and contribute
-- 📢 Share with others
-
----
-
-## 📬 Contact
-
-- **Issues**: [GitHub Issues](https://github.com/Onion99/KMP-MineStableDiffusion/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Onion99/KMP-MineStableDiffusion/discussions)
-
----
-
-
+<p align="center">
+<b>Enjoying the project? Share some love by giving it a ⭐ and spreading the word!</b><br>
+Licensed under the <b>GPL 3.0</b> License
+</p>
