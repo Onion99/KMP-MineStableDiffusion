@@ -84,7 +84,7 @@ We cover bleeding-edge architectures. Ensure the models you pick fit within your
 ### 🎮 Entry & Speed (Fastest, Minimal VRAM)
 
 - ✅ **[SD-Turbo](https://huggingface.co/stabilityai/sd-turbo)** - Extremely fast 1-step generation
-- ✅ **SD 1.x / SD 2.x** - The classic standard models
+- ✅ **[SD1.x / SD2.x / Illustrious](https://civitai.com/models)** - The classic standard models
 
 ### ⚖️ Balanced Performance (Moderate VRAM)
 
